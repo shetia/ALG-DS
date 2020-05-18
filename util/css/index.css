@@ -26,9 +26,11 @@ pre{
   margin: 0 auto;
   font-size: 16px;
 	line-height: 20px; /* 行距 */
-	width: 800px;
+  min-width: 800px;
+  max-width: 1200px;
 	overflow: auto; /* 超出宽度出现滑动条 */
-	overflow-Y:hidden; /* 作用是隐藏IE的右侧滑动条 */
+  overflow-Y:hidden; /* 作用是隐藏IE的右侧滑动条 */
+  margin-bottom: 12px;
 }
 code{
   padding: 0;
