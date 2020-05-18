@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>Document</title>
+  <style>
+    td{
+      width: 50px;
+      text-align: center;;
+    }
+  </style>
+</head>
+<body>
+  <table id="tableBox" border="1" cellspacing="0" cellpadding="0"></table>
+</body>
+</html>
+<script>
+/* 
+给出一个区间的集合，请合并所有重叠的区间。
+
+示例 1:
+
+输入: [[1,3],[2,6],[8,10],[15,18]]
+输出: [[1,6],[8,10],[15,18]]
+解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+示例 2:
+
+输入: [[1,4],[4,5]]
+输出: [[1,5]]
+解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。
+*/
+
+/**
+ * @param {number[][]} intervals
+ * @return {number[][]}
+ */
+ var merge = function(intervals) {
+  if(intervals.length < 1) return []
+  intervals.sort((a,b) => a[0] - b[0])
+  let res = [intervals[0]]
+  let list = []
+  let index = 1
+  while(index < intervals.length){
+    let cur = intervals[index]
+    let last = res[res.length - 1]
+    if (cur[0] > last[1]) {
+      res.push(cur)
+    } else if (cur[1] > last[1]) {
+      last[1] = cur[1]
+    }
+    index++
+  }
+  return res
+};
+
+let intervals = [[1,3],[2,6],[8,10],[15,18]]
+document.write('输入: ' + JSON.stringify(intervals))
+
+console.log(merge(intervals))
+
+
+
+let max = 0
+intervals.forEach(item => {
+  max = Math.max(max, item[1])
+})
+let n = max
+let tableBox = document.getElementById('tableBox')
+let tr = document.createElement('tr')
+for(let j = 0; j <= n; j++){
+  let td = document.createElement('td')
+  td.innerHTML = j 
+
+  let ac = 0.3
+  intervals.forEach(item => {
+    if (item[0] <= j && item[1] >= j){
+        ac += 0.2
+      td.style.background = `rgba(255,0,0,${ac})`
+      td.setAttribute('isIn', 1)
+    }
+  })
+  tr.appendChild(td)
+}
+tableBox.appendChild(tr)
+
+document.body.appendChild(tableBox)
+
+</script>

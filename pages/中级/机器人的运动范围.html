@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <table id="tableBox" border="1" cellspacing="0" cellpadding="0"></table>
+</body>
+</html>
+<script>
+  /* 
+  机器人的运动范围
+地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。
+一个机器人从坐标 [0, 0] 的格子开始移动，
+它每次可以向左、右、上、下移动一格（不能移动到方格外），
+也不能进入行坐标和列坐标的数位之和大于k的格子。
+例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。
+但它不能进入方格 [35, 38]，因为3+5+3+8=19。
+请问该机器人能够到达多少个格子？
+
+示例 1：
+
+输入：m = 2, n = 3, k = 1
+输出：3
+示例 1：
+
+输入：m = 3, n = 1, k = 0
+输出：1
+提示：
+
+1 <= n,m <= 100
+0 <= k <= 20
+  
+  */
+let obj = {}
+var movingCount = function(m, n, k) {
+  let total = 0
+  function runing(i,j){
+    //边界直接返回
+    if(i < 0 || j < 0 || i >= m || j >= n) return
+    // 判断是否能走
+    let sum = (i + '' + j).split('').reduce((a,b) => +a + +b)
+    let axis = JSON.stringify([i,j])
+    if(sum <= k && !obj[axis]){
+      total++
+      obj[axis] = true  // 标识该点已经走过, 下次不进
+      // 尝试 上下左右 走
+      runing(i + 1, j)
+      runing(i, j + 1)
+      runing(i - 1, j)
+      runing(i, j - 1)
+    }
+  }
+  runing(0,0)
+  return total
+};
+let m = 20, n = 15, k = 9
+console.log(movingCount(m, n, k))
+
+
+// 图解
+let tableBox = document.getElementById('tableBox')
+for(let i = 0; i < m; i++){
+  let tr = document.createElement('tr')
+  for(let j = 0; j < n; j++){
+    let td = document.createElement('td')
+    td.innerHTML = JSON.stringify([i,j])
+    let sum = (i + '' + j).split('').reduce((a,b) => +a + +b)
+    td.style.background = 'red'
+    if (sum <= k && obj[JSON.stringify([i,j])]){
+      td.innerHTML = JSON.stringify([i,j])
+      td.style.background = 'lime'
+    }
+    tr.appendChild(td)
+  }
+  tableBox.appendChild(tr)
+}
+document.body.appendChild(tableBox)
+</script>

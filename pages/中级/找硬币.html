@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+</head>
+
+<body></body>
+
+</html>
+<script>
+/* 
+最少硬币找零问题是硬币找零问题的一个变种。硬币找零问题是给出要找零的钱数，以及可
+用的硬币面额d1…dn及其数量，找出有多少种找零方法。
+最少硬币找零问题是给出要找零的钱数，以及可用的硬币面额d1…dn及其数量，找到所需的最少的硬币个数。
+例如，美国有以下面额（硬币）：d1=1，d2=5，d3=10，d4=25。
+如果要找36美分的零钱，我们可以用1个25美分、1个10美分和1个便士（1美分）。
+如何将这个解答转化成算法？
+ */
+
+  function MinCoinChange(coins) {
+    var coins = coins;                        // {1} 该参数代表问题中的面额
+    var cache = {};                           //{2} 为了更加高效且不重复计算值
+    this.makeChange = function (amount) {     // 递归函数，找零问题由它解决 参数 金额
+      var me = this;
+      if (!amount) {                            //{3} 若amount不为正（< 0），就返回空数组
+        return [];
+      }
+      if (cache[amount]) {                        //{4} 若结果已缓存，则直接返回结果；否则，执行算法。
+        return cache[amount];
+      }
+      var min = [], newMin, newAmount;
+      for (var i = 0; i < coins.length; i++) {    //{5} 
+        var coin = coins[i];
+        newAmount = amount - coin;               //{6}
+        if (newAmount >= 0) {
+          newMin = me.makeChange(newAmount);      //{7}
+        }
+        if (newAmount >= 0 && (newMin.length < min.length - 1 || !min.length) && (newMin.length || !newAmount)){
+          min = [coin].concat(newMin);                            //{11}
+          // console.log('new Min ' + min + ' for ' + amount);
+        }
+      }
+      console.log(cache)
+      return (cache[amount] = min);                             //{12}
+    };
+  }
+
+
+  var minCoinChange = new MinCoinChange([1, 5, 10, 25]);
+console.log(minCoinChange.makeChange(36)); 
+</script>

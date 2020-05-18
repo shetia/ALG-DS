@@ -1,0 +1,91 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-04-11 10:13:01
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-04-25 12:27:46
+ -->
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>全排列</title>
+</head>
+
+<body>
+  <pre>
+    给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+
+    示例:
+
+    输入: [1,2,3]
+    输出:
+    [
+      [1,2,3],
+      [1,3,2],
+      [2,1,3],
+      [2,3,1],
+      [3,1,2],
+      [3,2,1]
+    ]
+  </pre>
+</body>
+
+</html>
+<script>
+  // 获取一个数组总共有多少排列组合
+  function getArrayAll(list) {
+    let arrTotal = []
+    let temp = [];
+    (function (arr) {
+      for (var i = 0; i < arr.length; i++) {
+        temp.push(arr[i]); // 插入第i个值
+        var copy = [...arr]; // 复制数组
+        copy.splice(i, 1); // 删除复制数组中的第i个值，用于递归
+        if (copy.length == 0) { // 如果复制数组长度为0了，则打印变量
+          arrTotal.push([...temp])
+        } else { // 否则进行递归
+          arguments.callee(copy)
+        }
+        temp.pop() // 递归完了之后删除最后一个元素，保证下一次插入的时候没有上一次的元素
+      }
+    })(list)
+    return arrTotal
+  }
+  // 方法2
+  var permute = function (nums) {
+    if (nums.length == 0) return []
+    let res = [],
+      used = new Array(nums.length).fill(false)
+
+    generatePermutation(0, [])
+    return res
+
+    // p中保存了一个有index个元素的排列
+    // 向这个排列的末尾添加第[index+1]个元素，获得一个有index+1个元素的排列
+    function generatePermutation(index, p) {
+      if (index == nums.length) {
+        // 深拷贝
+        res.push([...p])
+        return;
+      }
+      for (let i = 0; i < nums.length; i++) {
+        if (!used[i]) {
+          // 将nums[i] 添加在p中
+          p = [...p, nums[i]]
+          used[i] = true
+          generatePermutation(index + 1, p)
+          p.pop()
+          used[i] = false
+        }
+      }
+      return;
+    }
+  };
+  let arr = [1, 2, 3, 4]
+  console.log(getArrayAll(arr))
+</script>

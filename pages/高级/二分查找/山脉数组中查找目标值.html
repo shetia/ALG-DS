@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>山脉数组中查找目标值</title>
+  <link rel="stylesheet" href="../../../css/code.css">
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/find-in-mountain-array/">山脉数组中查找目标值</a>
+  <pre>
+    （这是一个 交互式问题 ）
+
+    给你一个 山脉数组 mountainArr，请你返回能够使得 mountainArr.get(index) 等于 target 最小 的下标 index 值。
+    
+    如果不存在这样的下标 index，就请返回 -1。
+    
+    何为山脉数组？如果数组 A 是一个山脉数组的话，那它满足如下条件：
+  <code>
+    首先，A.length >= 3
+    
+    其次，在 0 < i < A.length - 1 条件下，存在 i 使得：
+    
+    A[0] < A[1] < ... A[i-1] < A[i] > A[i+1] > ... > A[A.length - 1]
+  </code>
+    你将 不能直接访问该山脉数组，必须通过 MountainArray 接口来获取数据：
+   <code>
+    MountainArray.get(k) - 会返回数组中索引为k 的元素（下标从 0 开始）
+    MountainArray.length() - 会返回该数组的长度
+   </code>
+    注意：
+    
+    对 MountainArray.get 发起超过 100 次调用的提交将被视为错误答案。此外，任何试图规避判题系统的解决方案都将会导致比赛资格被取消。
+    
+    为了帮助大家更好地理解交互式问题，我们准备了一个样例 “答案”：https://leetcode-cn.com/playground/RKhe3ave，请注意这 不是一个正确答案。
+    <code>
+      示例 1：
+    
+    输入：array = [1,2,3,4,5,3,1], target = 3
+    输出：2
+    解释：3 在数组中出现了两次，下标分别为 2 和 5，我们返回最小的下标 2。
+    示例 2：
+    
+    输入：array = [0,1,2,4,2,1], target = 3
+    输出：-1
+    解释：3 在数组中没有出现，返回 -1。
+    </code>
+    提示：
+    <code>
+      3 <= mountain_arr.length() <= 10000
+      0 <= target <= 10^9
+      0 <= mountain_arr.get(index) <= 10^9
+    </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * // This is the MountainArray's API interface. 这是MountainArray的API接口
+ * // You should not implement it, or speculate about its implementation 您不必实现它，或者猜测它的实现
+ * function MountainArray() {
+ *     @param {number} index
+ *     @return {number}
+ *     this.get = function(index) {
+ *         ...
+ *     };
+ *
+ *     @return {number}
+ *     this.length = function() {
+ *         ...
+ *     };
+ * };
+ */
+
+/**
+ * @param {number} target
+ * @param {MountainArray} mountainArr
+ * @return {number}
+ */
+  function MountainArray(arr) {
+    this.list = arr
+    this.get = function(index) {
+      return this.list[index]
+    }
+    this.length = function() {
+      return this.list.length
+    }
+  }
+
+  var findInMountainArray = function(target, mountainArr) {
+    // 一 查找峰值
+    let left = 0
+    let right = mountainArr.length() - 1
+    let mid = left + ((right - left) >> 1)
+    while(left <= right){
+      if(mountainArr.get(mid) < mountainArr.get(mid + 1)){ // 当mid小于右边的时,说明峰值在右边, 继续在右边查找
+        left = mid + 1
+      } else {                                             // 否则在左边, 继续在左边查找
+        right = mid - 1
+      }
+      mid = left + ((right - left) >> 1)
+    }
+    // 执行完上边的二分查找 left 就是峰值的下标了
+
+    // 二  根据峰值分两段 二分查找
+    let res = -1
+    res = binarySearch(mountainArr, 0, left, target, true)
+    res === -1 && (res = binarySearch(mountainArr, left, mountainArr.length() - 1, target, false))
+    return res
+  };
+  /**
+ * @param {MountainArray} mountainArr
+ * @param {number} left
+ * @param {number} right
+ * @param {number} target
+ * @param {Boolean} flag
+ * @return {number} 
+ */
+  function binarySearch(mountainArr, left, right, target, flag){
+    let mid = left + ((right - left) >> 1)　　　// 获取中间索引
+    while(left <= right){
+      let midValue = mountainArr.get(mid)
+      if(midValue === target) return mid        // 找到直接返回  
+      if(midValue < target){
+        flag ? left = mid + 1 : right = mid - 1    //用 flag   区分正序还是降序
+      } else {
+        flag ? right = mid - 1 : left = mid + 1
+      }
+      mid = left + ((right - left) >> 1)
+    }
+    return -1
+  }
+
+
+  let array = [1,5,2], target = 2
+  let mountainArr = new MountainArray(array)
+  console.log(findInMountainArray(target, mountainArr))
+</script>

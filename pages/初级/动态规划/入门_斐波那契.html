@@ -1,0 +1,103 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-04-11 10:47:29
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-04-11 11:29:11
+ -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>动态规划</title>
+</head>
+
+<body>
+
+</body>
+
+</html>
+<script>
+  /*
+动态规划
+使用递归去解决问题虽然简洁，但效率不高。包括 JavaScript 在内的众多语言，不能高效
+地将递归代码解释为机器代码，尽管写出来的程序简洁，但是执行效率低下。但这并不是
+说使用递归是件坏事，本质上说，只是那些指令式编程语言和面向对象的编程语言对递归
+的实现不够完善，因为它们没有将递归作为高级编程的特性。
+
+许多使用递归去解决的编程问题，可以重写为使用动态规划的技巧去解决。
+动态规划方案
+通常会使用一个数组来建立一张表，用于存放被分解成众多子问题的解。
+当算法执行完毕，最终的解将会在这个表中很明显的地方被找到，接下来看看斐波那契数列的例子。
+*/
+  /*
+  斐波那契数列可以定义为以下序列：
+  0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, …
+
+  斐波那契在 1202 年使用这个数列描述理想状态下兔子的增长。
+  */
+  console.log('斐波那契解法耗时对比:')
+  // 用递归的的解法
+  function recurFib(n) {
+    if (n < 2) return n
+    return recurFib(n - 1) + recurFib(n - 2)
+  }
+  /*
+    这个函数的问题在于它的执行效率非常低。
+    有太多值在递归调用中被重新计算, 如果编译器可以将已经计算的值记录下来，函数的执行效率就不会如此差。
+    我们可以使用动态规划的技巧来设计一个效率更高的算法。
+    使用动态规划设计的算法从它能解决的最简单的子问题开始，继而通过得到的解，
+    去解决其他更复杂的子问题，直到整个问题都被解决。
+    所有子问题的解通常被存储在一个数组里以便于访问。
+  */
+  // 动态规划解法
+  function dpRecurFib(n) {
+    let arr = Array(n).fill(0)
+    if (n == 1 || n == 2) return 1
+    arr[1] = 1, arr[2] = 1
+    for (let i = 3; i <= n; i++) {
+      arr[i] = arr[i - 1] + arr[i - 2]
+    }
+    return arr[n]
+  }
+
+  let num = 30
+  let start = new Date().getTime()
+  console.log(recurFib(num))
+  let stop = new Date().getTime()
+  console.log(`递归 n=${num} 耗时: ${stop - start}ms`)
+
+  start = new Date().getTime()
+  console.log(dpRecurFib(num))
+  stop = new Date().getTime()
+  console.log(`动态规划 n=${num} 耗时: ${stop - start}ms`)
+
+  start = new Date().getTime()
+  console.log(iterFib(num))
+  stop = new Date().getTime()
+  console.log(`迭代 n=${num} 耗时: ${stop - start}ms`)
+
+  /*
+  6765
+  递归耗时: 4ms
+  6765
+  动态规划耗时: 0ms
+  */
+
+  // 还可以使用迭代的方案计算斐波那契数列 这个版本的函数在计算斐波那契数列时和动态规划版本的效率一样
+  function iterFib(n) {
+    var last = 1;
+    var nextLast = 1;
+    var result = 1;
+    for (var i = 2; i < n; ++i) {
+      result = last + nextLast;
+      nextLast = last;
+      last = result;
+    }
+    return result;
+  }
+</script>

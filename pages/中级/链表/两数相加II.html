@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>两数相加 II</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script src="../../common/PacktDataStructuresAlgorithms.min.js"></script>
+<script type="module">
+ const { LinkedList } = PacktDataStructuresAlgorithms;
+  console.log(LinkedList)
+  // class Node {
+  //   constructor(element, next) {
+  //     this.element = element;
+  //     this.next = next;
+  //   }
+  // }
+/* 
+给你两个 非空 链表来代表两个非负整数。数字最高位位于链表开始位置。它们的每个节点只存储一位数字。将这两数相加会返回一个新的链表。
+
+你可以假设除了数字 0 之外，这两个数字都不会以零开头。
+
+进阶：
+
+如果输入链表不能修改该如何处理？换句话说，你不能对列表中的节点进行翻转。
+
+
+示例：
+
+输入：(7 -> 2 -> 4 -> 3) + (5 -> 6 -> 4)
+输出：7 -> 8 -> 0 -> 7
+*/
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+var addTwoNumbers = function(l1, l2) {
+  let arr1 = [], arr2 =  [], arr3 = []
+  let len1 = l1.size()
+  let len2 = l2.size()
+  for(let i = 0; i < len1; i++){
+    arr1.push(l1.getElementAt(i).element)
+  }
+  for(let i = 0; i < len2; i++){
+    arr2.push(l2.getElementAt(i).element)
+  }
+  let carry = 0  // 记录相加后的进位 比如6 + 7 = 13 则 1是进位
+  // arr1 和 arr2 从后面对应每个相加
+  while(arr1.length > 0 || arr2.length > 0 || carry > 0){
+    let last1 = arr1.pop()
+    let last2 = arr2.pop()
+    let {first, last} = sum(last1, last2, carry)
+    arr3.unshift(last)
+    carry = first
+  }
+  return createList(arr3)
+};
+// 计算三数之和
+function sum(n = 0, m = 0, c = 0){
+  let total = (n + m + c) + ''
+  let first = 0 // 进位
+  let last = 0  // 个位
+  if(total > 9){
+    last = +total.split('')[1]
+    first = +total.split('')[0]
+  } else {
+    last = +total
+    first = 0
+  }
+  return {
+    first,
+    last
+  }
+}
+
+
+let arr1 = [7,2,4,3]
+let arr2 = [5,6,4]
+// 7 -> 8 -> 0 -> 7
+
+function createList(arr){
+  let linkedList = new LinkedList()
+  for(let i = 0; i < arr.length; i++){
+    linkedList.push(arr[i])
+  }
+  return linkedList
+}
+
+let l1 = createList(arr1)
+let l2 = createList(arr2)
+// console.log(l1)
+// console.log(l2.toString())
+
+console.log(addTwoNumbers(l1, l2))
+
+
+</script>

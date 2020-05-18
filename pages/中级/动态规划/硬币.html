@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>硬币</title>
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/coin-lcci/">硬币</a>
+  <pre>
+        硬币。给定数量不限的硬币，币值为25分、10分、5分和1分，编写代码计算n分有几种表示法。(结果可能会很大，你需要将结果模上1000000007)
+
+    示例1:
+
+    输入: n = 5
+    输出：2
+    解释: 有两种方式可以凑成总金额:
+    5=5
+    5=1+1+1+1+1
+    示例2:
+
+    输入: n = 10
+    输出：4
+    解释: 有四种方式可以凑成总金额:
+    10=10
+    10=5+5
+    10=5+1+1+1+1+1
+    10=1+1+1+1+1+1+1+1+1+1
+    说明：
+
+    注意:
+
+    你可以假设：
+
+    0 <= n (总金额) <= 1000000
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var waysToChange = function(n) {
+  let coins = [1, 5, 10, 25]
+  let mod = 1000000007
+  let arr = Array(n + 1).fill(0)
+  arr[0] = 1
+  for(let i = 0; i < coins.length; i++){
+    for(let j = coins[i]; j <= n; j++){
+      arr[j] += arr[j - coins[i]]
+      arr[j] = arr[j] % mod
+    }
+  }
+  console.log(arr)
+  return arr[n]
+};
+
+var waysToChange1 = function (n) {
+  let c = 1000000007;
+  let res = 0;
+  for(let i = 0; i <= Math.floor(n / 25); i++){
+      let jmax = Math.floor((n - i * 25) / 10);
+      let t = (jmax + 1)*(Math.floor(n / 5) - 5 * i - jmax + 1);
+      res = (res + t) % c;
+  }
+  return res;
+}
+let n = 1000000
+</script>
+let start = new Date().getTime()
+console.log(waysToChange(n))
+let end = new Date().getTime()
+console.log('用时： ' + (end - start) + 'ms')
+
+start = new Date().getTime()
+console.log(waysToChange1(n))
+end = new Date().getTime()
+console.log('用时： ' + (end - start) + 'ms')
+</script>

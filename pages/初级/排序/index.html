@@ -1,0 +1,74 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-04-21 22:16:22
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-04-27 14:26:01
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+</body>
+</html>
+<script type="module">
+// import CArray from './CArray.js'
+// let numElements = 0
+// let myNums = new CArray(numElements)
+
+let arr = [3,5,1,6,4,7,2]
+console.log(arr, '初始')
+// for(let i = 0; i < arr.length; i++){
+//   myNums.insert(arr[i])
+// }
+// console.log(myNums.toString())
+
+// myNums.quickSort()
+// console.log(myNums.toString())
+// 快速排序 递归  双指针
+function _sort(arr){ 
+  quick(arr, 0, arr.length - 1)
+  return arr
+}
+function quick(arr, left, right){
+  let p = 0
+  if(arr.length > 1){
+    p = changeEle(arr, left, right)
+    if(left < p - 1){
+      quick(arr, left, p - 1)
+    }
+    if(p < right){
+      quick(arr, p, right)
+    }
+  }
+}
+function changeEle(arr, left, right){
+  let mid = arr[Math.floor((left + right) / 2)]
+  console.log(left, right)
+  let i = left
+  let j = right
+  while(i <= j){
+    while(mid > arr[i]){
+      i++
+    }
+    while(mid < arr[j]){
+      j--
+    }
+    if(i <= j){
+      [arr[i], arr[j]] = [arr[j], arr[i]]
+      i++
+      j--
+    }
+  }
+  console.log(arr, '-------')
+  return i
+}
+console.log(_sort(arr), '结束')
+</script>

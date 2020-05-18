@@ -1,0 +1,67 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-04-11 20:46:05
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-04-11 22:43:18
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+/*
+给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有满足条件且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+示例：
+
+给定数组 nums = [-1, 0, 1, 2, -1, -4]，
+
+满足要求的三元组集合为：
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+*/
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+ var threeSum = function(nums) {
+  nums = nums.sort((a,b) => a - b)   // 排序一下
+  let list = []
+  for(let i = 0; i < nums.length; i++){
+    if(i >= 1 && nums[i] === nums[i-1]) continue   // 剔除第一位重复情况
+    let j = i + 1
+    let k = nums.length - 1
+    while(j < k){
+      let sum = nums[i] + nums[j] + nums[k]  // 拿前面的两位 和  从后面开始加
+      if(sum === 0){
+        list.push([nums[i], nums[j], nums[k]])
+        j++
+        while(nums[j] === nums[j-1]){j++}  // 去除第二位重复情况
+      } else if (sum < 0){
+        j++
+      } else {
+        k--
+      }
+    }
+  }
+  return list
+};
+
+let nums = [-4,-2,-2,-2,0,1,2,2,2,3,3,4,4,6,6]
+console.log(threeSum(nums))
+</script>

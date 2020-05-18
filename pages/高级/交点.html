@@ -1,0 +1,133 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-04-12 13:29:46
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-04-12 21:43:31
+ -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+
+  <body></body>
+</html>
+<script>
+  /*
+给定两条线段（表示为起点start = {X1, Y1}和终点end = {X2, Y2}），如果它们有交点，请计算其交点，没有交点则返回空值。
+
+要求浮点型误差不超过10^-6。若有多个交点（线段重叠）则返回 X 值最小的点，X 坐标相同则返回 Y 值最小的点。
+示例 1：
+
+输入：
+line1 = {0, 0}, {1, 0}
+line2 = {1, 1}, {0, -1}
+输出： {0.5, 0}
+示例 2：
+
+输入：
+line1 = {0, 0}, {3, 3}
+line2 = {1, 1}, {2, 2}
+输出： {1, 1}
+示例 3：
+
+输入：
+line1 = {0, 0}, {1, 1}
+line2 = {1, 0}, {2, 1}
+输出： {}，两条线段没有交点
+ 
+
+提示：
+
+坐标绝对值不会超过 2^7
+输入的坐标均是有效的二维坐标
+*/
+
+  /**
+   * @param {number[]} start1
+   * @param {number[]} end1
+   * @param {number[]} start2
+   * @param {number[]} end2
+   * @return {number[]}
+   */
+  var inside = function(x1, x2, y1, y2, xk, yk) {
+    return (
+      (x1 === x2 || (Math.min(x1, x2) <= xk && xk <= Math.max(x1, x2))) &&
+      (y1 === y2 || (Math.min(y1, y2) <= yk && yk <= Math.max(y1, y2)))
+    );
+  };
+  var update = function(ans, x, y) {
+    if (!ans.length || x < ans[0] || (x === ans[0] && y < ans[1])) {
+      ans[0] = x;
+      ans[1] = y;
+    }
+    return ans;
+  };
+  var intersection = function(start1, end1, start2, end2) {
+    let x1 = start1[0],
+      y1 = start1[1],
+      x2 = end1[0],
+      y2 = end1[1];
+    let x3 = start2[0],
+      y3 = start2[1],
+      x4 = end2[0],
+      y4 = end2[1];
+    let ans = [];
+    // 若两直线平行
+    if ((y4 - y3) * (x2 - x1) === (y2 - y1) * (x4 - x3)) {
+      // 若两线段有重合
+      if ((y2 - y1) * (x3 - x1) === (y3 - y1) * (x2 - x1)) {
+        //分别判断四个点
+        if (inside(x1, x2, y1, y2, x3, y3)) {
+          ans = update(ans, x3, y3);
+        }
+        if (inside(x1, x2, y1, y2, x4, y4)) {
+          ans = update(ans, x4, y4);
+        }
+        if (inside(x3, x4, y3, y4, x1, y1)) {
+          ans = update(ans, x1, y1);
+        }
+        if (inside(x3, x4, y3, y4, x2, y2)) {
+          ans = update(ans, x2, y2);
+        }
+      }
+    } else {
+      // 联立方程得到 t1 和 t2 的值
+      let t1 =
+        (x3 * (y4 - y3) + y1 * (x4 - x3) - y3 * (x4 - x3) - x1 * (y4 - y3)) /
+        ((x2 - x1) * (y4 - y3) - (x4 - x3) * (y2 - y1));
+      let t2 =
+        (x1 * (y2 - y1) + y3 * (x2 - x1) - y1 * (x2 - x1) - x3 * (y2 - y1)) /
+        ((x4 - x3) * (y2 - y1) - (x2 - x1) * (y4 - y3));
+      // 判断 t1 和 t2 是否均在 [0, 1] 之间
+      if (t1 >= 0.0 && t1 <= 1.0 && t2 >= 0.0 && t2 <= 1.0) {
+        ans[0] = x1 + t1 * (x2 - x1);
+        ans[1] = y1 + t1 * (y2 - y1);
+      }
+    }
+    return ans;
+  };
+  let start1 = [0, 0],
+    end1 = [0, 1],
+    start2 = [1, 0],
+    end2 = [1, 1];
+
+  console.log(intersection(start1, end1, start2, end2));
+
+
+  /*
+   斜率公式
+   k=(y2-y1)/(x2-x1)
+
+  (y-y1)/(y2-y1) = (x-x1)/(x2-x1) = t
+
+  得 x=(x2-x1)t+x1
+    y=(y2-y1)t+y1
+
+  */
+</script>

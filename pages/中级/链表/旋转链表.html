@@ -1,0 +1,177 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-05-16 22:25:50
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-05-17 13:49:17
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>旋转链表</title>
+  <link rel="stylesheet" href="../../../css/code.css">
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/rotate-list/">旋转链表</a>
+  <pre>
+    给定一个链表，旋转链表，将链表每个节点向右移动 k 个位置，其中 k 是非负数。
+
+    示例 1:
+
+    输入: 1->2->3->4->5->NULL, k = 2
+    输出: 4->5->1->2->3->NULL
+    解释:
+    向右旋转 1 步: 5->1->2->3->4->NULL
+    向右旋转 2 步: 4->5->1->2->3->NULL
+    示例 2:
+
+    输入: 0->1->2->NULL, k = 4
+    输出: 2->0->1->NULL
+    解释:
+    向右旋转 1 步: 2->0->1->NULL
+    向右旋转 2 步: 1->2->0->NULL
+    向右旋转 3 步: 0->1->2->NULL
+    向右旋转 4 步: 2->0->1->NULL
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} k
+ * @return {ListNode}
+ */
+class ListNode{
+  constructor (val) {
+    this.val = val
+    this.next = null
+  }
+}
+class LinkedList{
+  constructor (list) {
+    this.head = null
+    this.size = 0
+    list.forEach(val => this.push(val))
+  }
+  push (val) {
+    let node = new ListNode(val)
+    let current = null
+    if (!this.head) {
+      this.head = node
+    } else {
+      current = this.head
+      while (current.next !== null) {
+        current = current.next
+      }
+      current.next = node
+    }
+    this.size++
+  }
+  toString () {
+    if(!this.head) return this.head
+    let str = this.head.val
+    let current = this.head
+    for(let i = 0; i < this.size; i++){
+      str += `->${current.val}`
+      current = current.next
+    }
+    return str
+  }
+}
+
+var rotateRight = function(head, k) {
+  // 避免掉 空和只有一个元素的情况
+  if(!head || !head.next) return head
+  let size = 1
+  let cur = head
+  while(cur.next) {
+      cur = cur.next
+      size++
+  }
+  // 因为当k 大于长度时, 又是一个轮回
+  let num = k % size
+  let node = head
+  while(num > 0){
+    // 拿掉最后一个, 把它放在头部
+    let last = node
+    // 拿到倒数第二个
+    while (last.next && last.next.next) {
+      last = last.next
+    }
+    let val = last.next.val
+    // 去掉最后一项
+    last.next = null
+    // 把最后一项 往头部添加
+    let vhead = new ListNode(val)
+    vhead.next = node
+    node = vhead
+    num--
+  }
+  return node
+};
+//方法2:
+var rotateRight1 = function(head, k) {
+  // 避免掉 空和只有一个元素的情况
+  if(!head || !head.next) return head
+  let size = 1
+  let cur = head
+  while(cur.next) {
+      cur = cur.next
+      size++
+  }
+  // 因为当k 大于长度时, 又是一个轮回, 所以对长度取余
+  let num = k % size
+  cur.next = head
+  let node = head
+  let index = 1
+  while (index < (size - num)){
+    node = node.next
+    index++
+  }
+  console.log(node.next)
+  let vnode = node.next
+  node.next = null
+  return vnode
+};
+var rotateRight = function(head, k) {
+  // 避免掉 空和只有一个元素, k=0的情况
+  if(!head || !head.next || k === 0) return head
+  let size = 1
+  let cur = head
+  // 获取长度
+  while(cur.next) {
+      cur = cur.next
+      size++
+  }
+  // 因为当k 大于长度时, 又是一个轮回, 所以对长度取余
+  let _k = k % size
+  let pre = head
+  for(let i = 0; i < size - _k -1; i++){
+    pre = pre.next
+  }
+  console.log(pre.next, 'pre.next')  // 3 -> 4 -> 5 -> null
+  console.log(head, 'head')         // 1 -> 2 -> 3 -> 4 -> 5 -> null
+  console.log(cur, 'cur')           // 5 -> null
+  let vnode = pre.next              // 3 -> 4 -> 5 -> null
+  pre.next = null
+  console.log(pre)                  // 2 -> null
+  console.log(head, 'head')         // 1 -> 2 -> null
+  cur.next = head
+  console.log(cur)                  // 5 -> 1 -> 2 -> null
+  return vnode
+};
+let list = [1,2,3,4,5], k = 3
+let head = new LinkedList(list).head
+console.log(rotateRight(head, k), '结果')
+</script>

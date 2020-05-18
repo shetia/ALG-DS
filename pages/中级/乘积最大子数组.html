@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>乘积最大子数组</title>
+  <link rel='stylesheet' href='../../util/css/index.css'>
+  <script src="../../util/js/highlight/index.js"></script>
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/maximum-product-subarray/">乘积最大子数组</a>
+  <pre class="hljs">
+    给你一个整数数组 nums ，请你找出数组中乘积最大的连续子数组（该子数组中至少包含一个数字），
+    并返回该子数组所对应的乘积。
+    <code class="javascript">
+      // 示例 1:
+      // 输入: [2,3,-2,4]
+      // 输出: 6
+      // 解释: 子数组 [2,3] 有最大乘积 6。
+
+      // 示例 2:
+      // 输入: [-2,0,-1]
+      // 输出: 0
+      // 解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。
+    </code>
+    <code class="javascript">
+      /**
+      * @param {number[]} nums
+      * @return {number}
+      */
+     // 暴力解法
+     var maxProduct = function(nums) {
+       if(nums.length < 2) return nums[0]
+       let max = -Infinity
+       for(let i = 0; i < nums.length; i++){
+         let total = nums[i]
+         max = Math.max(max, total)
+         for(let j = i + 1; j < nums.length; j++){
+           total *= nums[j]
+           max = Math.max(max, total)
+         }
+       }
+       return max
+     };
+     
+     // 方法2:
+     var maxProduct = function(nums) {
+       let max = nums[0]
+       let imax = 1
+       let imin = 1
+       for(let i = 0; i < nums.length; i++){
+         let item = nums[i]
+         if(item < 0){
+           [imax, imin] = [imin, imax]
+         }
+         imax = Math.max(item, item * imax)
+         imin = Math.min(item, item * imin)
+         console.log(imax, imin)
+         max = Math.max(imax, max)
+       }
+       return max
+     };
+     
+     /**
+       i
+       0    item = 2; imax = 2, imin = 1, max = 2
+       1    item = 3  imax = 6, imin = 1, max = 6
+       2    item = -1 < 0, 交换 => imax = 1, imin = 6 => imax = -2, imin = -12, max = 6
+       3    item = 4  imax = 4, imin = -48, max = 6
+       
+     */
+     
+     let nums = [2,3,-2,4]
+     console.log(maxProduct(nums))
+    </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+// 暴力解法
+var maxProduct = function(nums) {
+  if(nums.length < 2) return nums[0]
+  let max = -Infinity
+  for(let i = 0; i < nums.length; i++){
+    let total = nums[i]
+    max = Math.max(max, total)
+    for(let j = i + 1; j < nums.length; j++){
+      total *= nums[j]
+      max = Math.max(max, total)
+    }
+  }
+  return max
+};
+
+// 方法2:
+var maxProduct = function(nums) {
+  let max = nums[0]
+  let imax = 1
+  let imin = 1
+  for(let i = 0; i < nums.length; i++){
+    let item = nums[i]
+    if(item < 0){
+      [imax, imin] = [imin, imax]
+    }
+    imax = Math.max(item, item * imax)
+    imin = Math.min(item, item * imin)
+    console.log(imax, imin)
+    max = Math.max(imax, max)
+  }
+  return max
+};
+
+/**
+  i
+  0    item = 2; imax = 2, imin = 1, max = 2
+  1    item = 3  imax = 6, imin = 1, max = 6
+  2    item = -1 < 0, 交换 => imax = 1, imin = 6 => imax = -2, imin = -12, max = 6
+  3    item = 4  imax = 4, imin = -48, max = 6
+
+*/
+
+let nums = [2,3,-2,4]
+console.log(maxProduct(nums))
+</script>

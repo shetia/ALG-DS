@@ -1,0 +1,105 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-04-18 08:32:27
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-04-18 10:01:38
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    table{
+      margin: 0px auto;
+    }
+    td{
+      width: 2px;
+      height: 2px;
+      text-align: center;
+      border:none;
+    }
+  </style>
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/container-with-most-water/">11. 盛最多水的容器</a>
+  <hr>
+  <table id="tableBox" border="1" cellspacing="30" cellpadding="0"></table>
+</body>
+</html>
+<script>
+/*
+给你 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0)。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+说明：你不能倾斜容器，且 n 的值至少为 2。
+
+图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+
+示例：
+输入：[1,8,6,2,5,4,8,3,7]
+输出：49
+ */
+/**
+ * @param {number[]} height
+ * @return {number}
+ */
+ var maxArea = function(height) {
+  let x = height.length
+  let max = 0
+  let lIndex = 0
+  let rIndex = x - 1
+  while (lIndex < rIndex){
+    let h = Math.min(height[lIndex], height[rIndex])
+    let w = rIndex - lIndex
+    max = Math.max(max, h * w)
+    if (height[lIndex] > height[rIndex]) {
+      rIndex--
+    } else {
+      lIndex++
+    }
+  }
+  return max
+};
+//  var maxArea = function(height) {
+//   let x = height.length
+//   let max = 0
+//   for(let i = 0; i <= x - 1; i++){
+//     for(let j = i + 1; j < x; j++){
+//       let h = Math.min((height[i] || 0), (height[j] || 0))
+//       let w = j - i
+//       max = Math.max(h * w, max)
+//     }
+//   }
+//   return max
+// };
+let height = [1,8,6,2,5,4,8,3,7]  // [1,1] //
+console.log(maxArea(height))
+
+
+
+// 图解
+let m = height.length
+let n = Math.max(...height)
+let div = document.createElement('div')
+div.innerHTML = JSON.stringify(height)
+let tableBox = document.getElementById('tableBox')
+for(let i = n; i > 0; i--){
+  let tr = document.createElement('tr')
+  for(let j = 0; j < m; j++){
+    let td = document.createElement('td')
+    td.innerHTML = i
+    if(height[j] >= i){
+      td.style.background = 'red'
+      td.style.color = '#fff'
+    }
+    tr.appendChild(td)
+  }
+  tableBox.appendChild(tr)
+}
+document.body.appendChild(div)
+document.body.appendChild(tableBox)
+</script>

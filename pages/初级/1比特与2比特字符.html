@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>1比特与2比特字符</title>
+    <link rel="stylesheet" href="../../css/code.css" />
+  </head>
+  <body>
+    <a href="https://leetcode-cn.com/problems/1-bit-and-2-bit-characters/"
+      >1比特与2比特字符</a
+    >
+    <pre>
+    有两种特殊字符。第一种字符可以用一比特0来表示。第二种字符可以用两比特(10 或 11)来表示。
+
+    现给一个由若干比特组成的字符串。问最后一个字符是否必定为一个一比特字符。给定的字符串总是由0结束。
+
+    示例 1:
+
+    输入: 
+    bits = [1, 0, 0]
+    输出: True
+    解释: 
+    唯一的编码方式是一个两比特字符和一个一比特字符。所以最后一个字符是一比特字符。
+    示例 2:
+
+    输入: 
+    bits = [1, 1, 1, 0]
+    输出: False
+    解释: 
+    唯一的编码方式是两比特字符和两比特字符。所以最后一个字符不是一比特字符。
+    注意:
+
+    1 <= len(bits) <= 1000.
+    bits[i] 总是0 或 1.
+  </pre
+    >
+  </body>
+</html>
+<script>
+  /**
+   * @param {number[]} bits
+   * @return {boolean}
+   */
+
+   /**
+    * 看清出题目: 0 表示 一比特 , 10 / 11 表示 两比特, bits最后元素总为 0, 问最后元素是否为 一比特
+
+      如bits = [0, 1, 0, 0, 0], [1,0] 构成两比特 之后 [0,0] 构不成 两比特, 所以只能是一比特
+      bits = [0, 1, 0, 1, 0], [1,0] 构成两比特 之后 [1,0] 构成 两比特, 所以不是一比特
+
+      我们可以把它当成个队列, 碰到 0, 就出列一个, 碰到1就出列两个
+
+      如: bits = [0, 1, 0, 0, 0]
+      碰到0, 0就出列 => [1, 0, 0, 0]
+      碰到1, 1和0就出列 => [0, 0]
+      碰到0, 0就出列 => [0]
+
+      判断最后剩下是不是只有一个元素
+    * 
+    * 
+   */
+  // 方法1
+  var isOneBitCharacter = function (bits) {
+    while (bits.length > 1) {
+      if (bits[0] === 1) {
+        bits = bits.slice(2)
+      } else {
+        bits.shift()
+      }
+    }
+    return bits.length == 1
+  }
+
+
+  // 方法2
+  /** 0  1  2  3  4   i
+   * [0, 1, 0, 1, 0]
+   * 
+   */
+  var isOneBitCharacter = function (bits) {
+    var len = bits.length
+    for (let i = 1; i < len; i++) {
+      if (bits[len - 1 - i] !== 1) {
+        return i % 2 == 1
+      }
+    }
+    return len % 2 == 1
+  }
+  let bits = [0, 1, 0, 1, 0]
+  console.log(isOneBitCharacter(bits))
+</script>

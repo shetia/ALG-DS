@@ -1,0 +1,69 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-04-19 20:48:39
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-04-19 22:28:13
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>接雨水</title>
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/trapping-rain-water/">接雨水</a>
+  <pre>
+    给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+    <img src="./imgs/rainwatertrap.png" alt="">
+    上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，
+    在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
+
+    示例:
+
+    输入: [0,1,0,2,1,0,1,3,2,1,2,1]
+    输出: 6
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number[]} height
+ * @return {number}
+ */
+// 暴力解法
+ var trap = function(height) {
+  let total = 0
+  for(let i = 1; i < height.length; i++){
+    let left = Math.max(...height.slice(0, i))  // 找出当前项左边的最大值
+    let right = Math.max(...height.slice(i + 1))// 找出当前项右边的最大值
+
+    let min = Math.min(left, right)             // 取左右两值的 最小值
+    if(min > height[i]) {                       // 如果 最小值比当前项大
+      total += min - height[i]
+    }
+  }
+  return total
+};
+// 双指针解法
+var trap = function(height) {
+  let left = 0, right = height.length - 1
+  let lMax = 0, rMax = 0
+  let total = 0
+  while(left < right){
+    if (height[left] < height[right]) {  // 当左边项 小于 右边项时  指针右移
+      height[left] >= lMax ? lMax = height[left] : total += lMax - height[left]
+      left++
+    } else {  // 其他情况 左移
+      height[right] >= rMax ? rMax = height[right] : total += rMax - height[right]
+      right--
+    }
+  }
+  return total
+};
+let height = [0,1,0,2,1,0,1,3,2,1,2,1]
+console.log(trap(height))
+</script>

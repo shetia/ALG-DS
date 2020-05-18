@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>数组中的逆序对</title>
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/">数组中的逆序对</a>
+  <pre>
+    在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。
+    输入一个数组，求出这个数组中的逆序对的总数。
+      示例 1:
+
+      输入: [7,5,6,4]
+      输出: 5
+       [7,5] [7,6] [7,4] [5,4] [6,4]
+
+      限制：
+
+      0 <= 数组长度 <= 50000
+  </pre>
+  <hr>
+  <p>并归排序图解</p>
+  <img src="./imgs/并归排序.webp" alt="">
+  <img src="./imgs/并归排序.png" alt="">
+</body>
+</html>
+<script>
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var reversePairs = function(nums) {
+  if(nums.length < 1) return 0
+  let total = 0
+  let merge = function (left, right){               // 合并排序函数
+    let l_index = 0, r_index = 0 
+    let res = []
+    while(l_index < left.length && r_index < right.length){     // 两个数组 元素两两对比, 把小的依次加入res  直到其中有数组的元素全部加入到res
+      if (left[l_index] > right[r_index]) {                     // 右边小, 把右边的加入res
+        res.push(right[r_index])
+        r_index++
+        total += left.length - l_index
+      } else {                                      // 左边小或等, 把左边的加入res
+        res.push(left[l_index])
+        l_index++
+      }
+    }
+    
+    while(l_index < left.length){                         // 把剩下的继续加入res
+      res.push(left[l_index++])
+    }
+    while(r_index < right.length){
+      res.push(right[r_index++])
+      total += left.length - l_index
+    }
+    return res
+  }
+  let arrSplit = function (arr){                      // 分割的递归函数, 把数组都分割成 单个元素的  再返回合并后的排序函数
+    if(arr.length === 1) return arr
+    let middle = ~~(arr.length / 2)                  // 相当于Math.floor()
+    let left = arr.slice(0, middle)
+    let right = arr.slice(middle)
+    return merge(arrSplit(left), arrSplit(right))
+  }
+  arrSplit(nums)
+  return total
+};
+//写法二
+var reversePairs = function(nums) {
+    if(nums == null || nums.length == 0) return 0;
+    let copy = nums.slice(0);
+    let res = reversePairsCore(nums, copy, 0, nums.length -1);
+    return res;
+};
+
+function reversePairsCore(data, copy, start, end)
+{
+    if(start >= end) return 0;
+    let mid = (start + end) >> 1;
+    let left = reversePairsCore(copy, data, start, mid);
+    let right = reversePairsCore(copy, data, mid + 1, end);
+    let [p, q, count, copyIdx] = [mid, end, 0, end];
+    while(p >= start && q >= mid + 1){
+        if(data[p] > data[q]){
+            count += q - mid;
+            copy[copyIdx--] = data[p--];
+        } else{
+            copy[copyIdx--] = data[q--];
+        }
+    }
+    while(p >= start){
+        copy[copyIdx--] = data[p--];
+    }
+    while(q >= mid + 1){
+        copy[copyIdx--] = data[q--];
+    }
+    return left + right + count;
+}
+
+let nums = [7,5,6,4]
+let start = new Date().getTime()
+console.log(reversePairs(nums))
+let end = new Date().getTime()
+console.log(end - start, 'ms')
+</script>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+
+  /* 
+  实现函数 ToLowerCase()，该函数接收一个字符串参数 str，并将该字符串中的大写字母转换成小写字母，之后返回新的字符串。
+    示例 1：
+
+    输入: "Hello"
+    输出: "hello"
+    示例 2：
+
+    输入: "here"
+    输出: "here"
+    示例 3：
+
+    输入: "LOVELY"
+    输出: "lovely"
+
+  */
+var toLowerCase = function(str) {
+    let obj = {
+      'A':'a',
+      'B':'b',
+      'C':'c',
+      'D':'d',
+      'E':'e',
+      'F':'f',
+      'G':'g',
+      'H':'h',
+      'I':'i',
+      'J':'j',
+      'K':'k',
+      'L':'l',
+      'M':'m',
+      'N':'n',
+      'O':'o',
+      'P':'p',
+      'Q':'q',
+      'R':'r',
+      'T':'t',
+      'S':'s',
+      'U':'u',
+      'V':'v',
+      'W':'w',
+      'X':'x',
+      'Y':'y',
+      'Z':'z'
+    }
+    let list = str.split('')
+    list.forEach((item,index) => {
+      console.log(obj[item])
+      if(obj[item]){
+        console.log('里')
+        list[index] = obj[item]
+      }
+    })
+    console.log(list)
+    return list.join('')
+};
+console.log(toLowerCase("Hello"))
+
+
+// a-z => 97-122   A-Z => 65-90 
+var toLowerCase1 = function(str) {
+    let res = ''
+    for(let item of str){
+      let ch = item.charCodeAt()
+      if(ch>=65&&ch<=90){
+        res += String.fromCharCode(ch + 32)
+      }else{
+        res += item
+      }
+    }
+    return res
+};
+
+var toLowerCase2 = function(str) {
+    return str.toLocaleLowerCase()
+};
+</script>

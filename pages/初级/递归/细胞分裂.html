@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  /* 
+  递归解题的基本套路（四步曲）：
+
+  1.先定义一个函数，明确这个函数的功能，由于递归的特点是问题和子问题都会调用函数自身，所以这个函数的功能一旦确定了， 之后只要找寻问题与子问题的递归关系即可
+
+  2.接下来寻找问题与子问题间的关系（即递推公式），这样由于问题与子问题具有相同解决思路，只要子问题调用步骤 1 定义好的函数，问题即可解决。
+  所谓的关系最好能用一个公式表示出来，比如f(n) = n * f(n-)这样，如果暂时无法得出明确的公式，用伪代码表示也是可以的, 发现递推关系后，要寻找最终不可再分解的子问题的解，即（临界条件），确保子问题不会无限分解下去。
+  由于第一步我们已经定义了这个函数的功能，所以当问题拆分成子问题时，子问题可以调用步骤 1 定义的函数，符合递归的条件（函数里调用自身）
+
+  3.将第二步的递推公式用代码表示出来补充到步骤 1 定义的函数中
+
+  4.最后也是很关键的一步，根据问题与子问题的关系，推导出时间复杂度,如果发现递归时间复杂度不可接受，则需转换思路对其进行改造，看下是否有更靠谱的解法
+  
+  */
+
+
+
+
+  /* 
+  细胞分裂 有一个细胞 
+  每一个小时分裂一次，
+  一次分裂一个子细胞，
+  第三个小时后会死亡。
+  那么n个小时候有多少细胞？
+  */
+
+
+ /* 
+  可以把细胞分为三个阶段
+  A 代表细胞的初始态, 
+  B 代表幼年态(细胞分裂一次), 
+  C 代表成熟态(细胞分裂两次)，
+  
+  C 再经历一小时后细胞死亡  
+
+
+    A细胞可由A B C 分裂而成 即 a(n) = a(n-1) + b(n-1) + c(n-1)
+    B细胞可由A     分裂而成 即 b(n) = a(n-1)
+    C细胞可由B     分裂而成 即 c(n) = b(n-1)
+
+    两个小时之后的时间,不管有多少小时之后细胞总数都是由这几个状态的细胞组成
+ */
+  function cellDivision (n) {
+
+    function a(n){
+      if(n===1) return 1
+      return a(n-1) + b(n-1) + c(n-1)
+    }
+    function b(n){
+      if(n===1) return 0
+      return a(n-1)
+    }
+    function c(n){
+      if(n===1||n===2) return 0
+      return b(n-1)
+    }
+    
+  
+    return a(n) + b(n) + c(n)
+  }
+
+  console.log(cellDivision(4))
+  console.log(cellDivision(5))
+  console.log(cellDivision(6))
+</script>

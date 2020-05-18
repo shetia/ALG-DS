@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>青蛙跳台阶问题</title>
+  <link rel="stylesheet" href="../../../css/code.css">
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/qing-wa-tiao-tai-jie-wen-ti-lcof/">青蛙跳台阶问题</a>
+  <pre>
+    一只青蛙一次可以跳上1级台阶，也可以跳上2级台阶。求该青蛙跳上一个 n 级的台阶总共有多少种跳法。
+
+    答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+
+    示例 1：
+
+    输入：n = 2
+    输出：2
+    示例 2：
+
+    输入：n = 7
+    输出：21
+    提示：
+
+    0 <= n <= 100
+  </pre>
+</body>
+</html>
+<script>
+ /* 
+ 简单地说，就是如果在函数中存在着调用函数本身的情况，这种现象就叫递归
+ */
+
+  /*  
+  一只青蛙可以一次跳 1 级台阶或一次跳 2 级台阶,例如:
+跳上第 1 级台阶只有一种跳法：直接跳 1 级即可。跳上第 2 级台阶
+有两种跳法：每次跳 1 级，跳两次；或者一次跳 2 级。
+问要跳上第 n 级台阶有多少种跳法？
+  
+  */
+  /* 
+  因为一次能跳1级或2级
+  所以要跳到n级,就必须是从n-1级或n-2级处跳上的
+  
+  当n大于2时, f(n) = f(n-1) + f(n-2)
+
+  */
+
+
+  function jump(n){
+    if(n <= 1) return 1
+    if(n === 2) return 2
+    return jump(n-1) + jump(n-2)
+  }
+
+  var numWays = function (n) {
+    var func = function (x, a = 1, b = 1) {
+      if (x < 2) {
+        return b
+      }
+      return func(x - 1, b, (a + b) % 1000000007)
+    }
+
+    return func(n)
+  }
+
+  // 非递归解法
+  var numWays = function(n) {
+    if(n<=0) return 1
+    if(n<=2) return n
+    let i = 2, cur = 2, pre = 1, res=0;
+    while(i++ < n){
+        res = (pre + cur) % 1000000007;
+        pre = cur
+        cur = res
+    }
+    return res
+  };
+
+  var numWays = function (n) {
+    if( n <= 1) return 1
+    let a = 1, b = 2
+    for(let i = 3; i <= n; i++){
+      let total = (a + b) % 1000000007
+      a = b
+      b = total
+    }
+    return b
+  }
+  console.log(jump(10))
+</script>

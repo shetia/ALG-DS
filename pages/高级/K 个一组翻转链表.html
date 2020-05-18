@@ -1,0 +1,128 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-05-16 12:59:10
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-05-16 20:09:35
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>K 个一组翻转链表</title>
+  <link rel="stylesheet" href="../../css/code.css">
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/reverse-nodes-in-k-group/">K 个一组翻转链表</a>
+  <pre>
+    给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
+
+    k 是一个正整数，它的值小于或等于链表的长度。
+
+    如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+
+    示例：
+
+    给你这个链表：1->2->3->4->5
+
+    当 k = 2 时，应当返回: 2->1->4->3->5
+
+    当 k = 3 时，应当返回: 3->2->1->4->5
+    说明：
+
+    你的算法只能使用常数的额外空间。
+    你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+
+ //  链表
+function ListNode(val) {
+  this.val = val;
+  this.next = null;
+}
+function LinkedList(list){
+  this.count = 0
+  this.head = undefined
+  // 添加元素
+  this.push = function (val) {
+    const node = new ListNode(val)
+    let current
+    if(this.head == null) {         // 如果是空链表, 直接把head赋值
+      this.head = node
+    } else {
+      current = this.head
+      while(current.next != null) {  // 直到链表尾部
+        current = current.next
+      }
+      current.next = node          // 在尾部添加push进来的值
+    }
+    this.count++
+  }
+  // 查看链表
+  this.toString = function () {
+    if(this.head == null) {
+      return ''
+    }
+    let objStr = `${this.head.val}`
+    let current = this.head.next
+    for(let i = 1; i < this.count && current != null; i++){
+      objStr = `${objStr}->${current.val}`
+      current = current.next
+    }
+    return objStr
+  }
+
+  if(list){
+    for(let i = 0; i < list.length; i++){
+      this.push(list[i])
+    }
+  }
+}
+/**
+ * @param {ListNode} head
+ * @param {number} k
+ * @return {ListNode}
+ */
+var reverseKGroup = function(head, k) {
+  if(!head) return head
+  let slow = head
+  let fast = head
+  for(let i = 0; i < k; i++){
+    if(fast) {
+      fast = fast.next
+    } else {
+      return head
+    }
+  }
+  // 对当前区段进行翻转
+  let newHead = slow
+  let pre = null
+  for(let i = 0; i < k; i++){
+    let node = slow.next
+    slow.next = pre
+    pre = slow
+    slow = node
+  }
+  newHead.next = reverseKGroup(slow, k)
+  return pre
+};
+
+
+let list = [1,2,3,4,5], k = 2
+let linkedList = new LinkedList(list)
+let head = linkedList.head
+console.log(linkedList.toString())
+console.log(reverseKGroup(head, k))
+</script>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>合并K个排序链表</title>
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/merge-k-sorted-lists/">合并K个排序链表</a>
+  <pre>
+    合并 k 个排序链表，返回合并后的排序链表。请分析和描述算法的复杂度。
+
+    示例:
+
+    输入:
+    [
+      1->4->5,
+      1->3->4,
+      2->6
+    ]
+    输出: 1->1->2->3->4->4->5->6
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode[]} lists
+ * @return {ListNode}
+ */
+ var mergeKLists = function(lists) {
+  let res = null
+  for(let i = 0; i < lists.length; i++ ){
+    // 把lists中的每一项 顺序合并
+    res = merge(res, lists[i])
+  }
+  return res
+};
+function merge(res, item) {
+  // 第一个 和 最后一个 的情况
+  if(!res || !item) return res ? res : item
+  let head = new ListNode(0)
+  let cur = head
+  let left = res
+  let right = item
+  // 对比两个链表, 从小到大 依次
+  while(left && right){
+    if (left.val < right.val) {
+      cur.next = left
+      left = left.next
+    } else {
+      cur.next = right
+      right = right.next
+    }
+    cur = cur.next
+  }
+  // 把剩下的继续加入链表
+  cur.next = left ? left : right
+  return head.next
+}
+
+
+// 暴力解法
+var mergeKLists = function(lists) {
+  let arr = []
+  // 把所有val 都加入到一个数组中
+  for (let i = 0; i < lists.length; i++) {
+    let item = lists[i]
+    while(item){
+      arr.push(item.val)
+      item = item.next
+    }
+  }
+  // 排序
+  arr.sort((a, b) => a - b)
+  let head = new ListNode()
+  let cur = head
+  // 循环数组arr 创建链表
+  for(let i = 0; i < arr.length; i++){
+    cur.next = new ListNode(arr[i])
+    cur = cur.next
+  }
+  // 不要第一个,因为自己创建的, 从第二个开始才包含lists的内容
+  return head.next
+};
+</script>

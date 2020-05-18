@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+/* 
+给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。
+
+例如，给出 n = 3，生成结果为：
+n = 4
+[
+  "(((())))",
+  "(()()())",
+  "(())()()"
+]
+n = 3
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+n = 2
+[
+  "()()",
+  "(())"
+]
+n = 1
+[
+  "()"
+]
+*/
+
+/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function(n) {
+  let list = []
+  function sum(str, num, ln, rn){
+    if(str.length === 2 * n - 1){
+      str += ln ? '(' : ')',list.push(str)
+      return
+    } 
+    num >= 0 && ln > 0 ? (str += '(',ln--) : (str += ')',rn--)
+    rn > 0 && sum(str, -1, ln, rn)
+    ln > 0 && sum(str, 1, ln, rn)
+  }
+  sum('', 0, n, n)
+  return list.filter(item => isValid(item) )
+};
+let n = 2
+console.log(generateParenthesis(n))
+
+
+
+// 判断是否有效
+function isValid(str){
+  let sum = 0
+  for(let prop of str){
+    sum += prop ===')' ? -1 : 1
+    if(sum < 0) return false
+  }
+  return true
+}
+
+</script>
+

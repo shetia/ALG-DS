@@ -1,0 +1,106 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-04-11 12:09:50
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-04-11 13:37:06
+ -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+
+</html>
+<script>
+  /*
+适合使用动态规划去解决的问题是寻找两个字符串的最长公共子串。
+例如，在单词
+“raven”和“havoc”中，最长的公共子串是“av”。
+
+寻找最长公共子串常用于遗传学中，
+用于使用核苷酸中碱基的首字母对 DNA 分子进行描述。
+*/
+  function my_lcs(word1, word2) {
+    let arr = []
+    for (let i = 0; i < word1.length; i++) {
+      let str = word1[i]
+      arr.push(str)
+      for (let prop of word1.slice(i + 1)) {
+        str += prop
+        arr.push(str)
+      }
+    }
+    let res = []
+    let len = 0
+    for (let i = 0; i < arr.length; i++) {
+      if (word2.includes(arr[i])) {
+        res.push(arr[i])
+        len = Math.max(len, arr[i].length)
+      }
+    }
+    res = res.filter(t => t.length === len)
+    return res
+  }
+
+  function lcs(word1, word2) {
+    var max = 0;
+    var index = 0;
+    var lcsarr = new Array(word1.length + 1);
+    for (var i = 0; i <= word1.length + 1; ++i) {
+      lcsarr[i] = new Array(word2.length + 1);
+      for (var j = 0; j <= word2.length + 1; ++j) {
+        lcsarr[i][j] = 0;
+      }
+    }
+    console.log(JSON.parse(JSON.stringify(lcsarr)))
+    for (var i = 0; i <= word1.length; ++i) {
+      for (var j = 0; j <= word2.length; ++j) {
+        if (i == 0 || j == 0) {
+          lcsarr[i][j] = 0;
+        } else {
+          if (word1[i - 1] == word2[j - 1]) {
+            lcsarr[i][j] = lcsarr[i - 1][j - 1] + 1;
+          } else {
+            lcsarr[i][j] = 0;
+          }
+        }
+        if (max < lcsarr[i][j]) {
+          max = lcsarr[i][j];
+          index = i;
+        }
+      }
+    }
+    console.log(lcsarr)
+    var str = "";
+    if (max == 0) {
+      return "";
+    } else {
+      for (var i = index - max; i <= max; ++i) {
+        str += word2[i];
+      }
+      return str;
+    }
+  }
+  let word1 = 'abcb'
+  let word2 = 'absc'
+
+  let start = new Date().getTime()
+  console.log(lcs(word1, word2))
+  let stop = new Date().getTime()
+  console.log('用时: ' + (stop - start) + ' ms')
+
+  start = new Date().getTime()
+  console.log(my_lcs(word1, word2))
+  stop = new Date().getTime()
+  console.log('我的用时: ' + (stop - start) + ' ms')
+</script>

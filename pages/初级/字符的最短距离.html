@@ -1,0 +1,69 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-01-05 22:17:25
+ * @LastEditors  : somebody
+ * @LastEditTime : 2020-01-05 23:23:44
+ -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+  <script src="main.js"></script>
+</head>
+
+<body>
+
+</body>
+
+</html>
+<script>
+  /*
+给定一个字符串 S 和一个字符 C。返回一个代表字符串 S 中每个字符到字符串 S 中的字符 C 的最短距离的数组。
+
+示例 1:
+
+输入: S = "loveleetcode", C = 'e'
+输出: [3, 2, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0]
+说明:
+
+字符串 S 的长度范围为 [1, 10000]。
+C 是一个单字符，且保证是字符串 S 里的字符。
+S 和 C 中的所有字母均为小写字母。
+
+*/
+
+  /**
+   * @param {string} S
+   * @param {character} C
+   * @return {number[]}
+   */
+  var shortestToChar = function (S, C) {
+    let len = S.length
+    let list = Array(len)
+    let pre = S.indexOf(C)
+    for (let i = 0; i < len; i++) {
+      if (S[i] === C) {
+        pre = i
+      }
+      list[i] = Math.abs(pre - i)
+    }
+    let last = S.lastIndexOf(C)
+    for (let j = len - 1; j > 0; j--) {
+      if (S[j] === C) {
+        last = j
+      }
+      list[j] = Math.min(Math.abs(last - j), list[j])
+    }
+
+    return list
+  };
+
+  console.log(shortestToChar('loveleetcode', 'e'))
+</script>

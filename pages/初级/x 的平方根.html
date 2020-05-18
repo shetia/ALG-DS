@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>Document</title>
+  <link rel='stylesheet' href='../../css/code.css'>
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/sqrtx/">x 的平方根</a>
+  <pre>
+    实现 int sqrt(int x) 函数。
+
+    计算并返回 x 的平方根，其中 x 是非负整数。
+
+    由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
+
+    示例 1:
+
+    输入: 4
+    输出: 2
+    示例 2:
+
+    输入: 8
+    输出: 2
+    说明: 8 的平方根是 2.82842..., 
+         由于返回类型是整数，小数部分将被舍去。
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number} x
+ * @return {number}
+ */
+ var mySqrt = function(x) {
+  if(x == 1) return 1
+  let left = 0
+  let right = x >> 1
+  while(left <= right){
+    let mid = left + ((right - left) >> 1)
+    if(mid ** 2 > x){
+      right = mid - 1
+    } else {
+      left = mid + 1
+    }
+  }
+
+  return left - 1
+};
+
+
+var mySqrt = function(x) {
+  return Math.floor(x ** 0.5)
+};
+let x = 2
+console.log(mySqrt(x))
+</script>

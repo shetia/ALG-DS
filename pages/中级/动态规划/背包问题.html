@@ -1,0 +1,106 @@
+<!--
+ * @Author: shetia
+ * @Date: 2020-04-23 17:04:56
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-04-23 17:42:06
+ * @Description: file content
+ -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre>
+    给定一个固定大小、能够携重W的背包，
+    以及一组有价值和重量的物品，找出一个最佳解决方案，使得装入背包的物品总重量不超过W，
+    且总价值最大。
+    下面是一个例子：
+    物 品# 重 量 价 值
+      1       2     3
+      2       3     4
+      3       4     5
+    考虑背包能够携带的重量只有5。对于这个例子，我们可以说最佳解决方案是往背包里装入
+    物品1和物品2，这样，总重量为5，总价值为7。
+
+    这个问题有两个版本。0-1版本只能往背包里装完整的物品，而分数背包问题则允许装入分数物品。
+    在这个例子里，我们将处理该问题的0-1版本。动态规划对分数版本无能为力，但学习贪心算法可以解决它。
+  </pre
+    >
+  </body>
+</html>
+<script>
+  function knapSack(capacity, weights, values, n) {
+    var i,
+      w,
+      a,
+      b,
+      kS = []
+    for (i = 0; i <= n; i++) {
+      //{1}
+      kS[i] = []
+    }
+    for (i = 0; i <= n; i++) {
+      for (w = 0; w <= capacity; w++) {
+        if (i == 0 || w == 0) {
+          //{2}
+          kS[i][w] = 0
+        } else if (weights[i - 1] <= w) {
+          //{3}
+          a = values[i - 1] + kS[i - 1][w - weights[i - 1]]
+          b = kS[i - 1][w]
+          kS[i][w] = a > b ? a : b //{4} max(a,b)
+        } else {
+          kS[i][w] = kS[i - 1][w] //{5}
+        }
+      }
+    }
+    return kS[n][capacity] //{6}
+  }
+  var values = [3, 4, 5],
+    weights = [2, 3, 4],
+    capacity = 5,
+    n = values.length
+  console.log(knapSack(capacity, weights, values, n)) //输出 7
+
+
+
+
+
+//   function isPrime(num) {
+//     if(typeof num != 'number') return false
+//     for(let i = 2; i < num; i++){
+//        if(num % i === 0){
+// 			    return false
+//        }
+//    	}
+// 	return true
+// }
+
+//   function isPrime1(num) {
+//     if(typeof num != 'number') return false
+// 	if(num > 2 && num % 2 === 0) return false
+//     let index = 3
+//     while(index < Math.sqrt(num)){
+//         if(num % index === 0){
+// 			return false
+//         }
+// 		index += 2
+//     }
+// 	return true
+// }
+// let num = 98712126783653
+// console.log('输入num = '+ num)
+// let start = new Date().getTime()
+// console.log(isPrime(n))
+// let end = new Date().getTime()
+// console.log('用时： ' + (end - start) + 'ms')
+
+// start = new Date().getTime()
+// console.log(isPrime1(n))
+// end = new Date().getTime()
+// console.log('sqrt用时： ' + (end - start) + 'ms')
+</script>

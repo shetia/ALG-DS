@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>LFU缓存</title>
+  <link rel="stylesheet" href="../../css/code.css">
+</head>
+<body>
+  <a href="https://leetcode-cn.com/problems/lfu-cache/"> LFU缓存</a>
+  <pre>
+    请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。它应该支持以下操作：get 和 put。
+
+    get(key) - 如果键存在于缓存中，则获取键的值（总是正数），否则返回 -1。
+    put(key, value) - 如果键已存在，则变更其值；如果键不存在，请插入键值对。
+    当缓存达到其容量时，则应该在插入新项之前，使最不经常使用的项无效。
+    在此问题中，当存在平局（即两个或更多个键具有相同使用频率）时，应该去除最久未使用的键。
+
+    「项的使用次数」就是自插入该项以来对其调用 get 和 put 函数的次数之和。使用次数会在对应项被移除后置为 0 。
+
+    进阶：
+    你是否可以在 O(1) 时间复杂度内执行两项操作？
+   <code>
+      示例：
+
+      LFUCache cache = new LFUCache( 2 /* capacity (缓存容量) */ );
+
+      cache.put(1, 1);
+      cache.put(2, 2);
+      cache.get(1);       // 返回 1
+      cache.put(3, 3);    // 去除 key 2
+      cache.get(2);       // 返回 -1 (未找到key 2)
+      cache.get(3);       // 返回 3
+      cache.put(4, 4);    // 去除 key 1
+      cache.get(1);       // 返回 -1 (未找到 key 1)
+      cache.get(3);       // 返回 3
+      cache.get(4);       // 返回 4
+   </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number} capacity
+ */
+ var LFUCache = function(capacity) {
+  this.size = capacity
+  this.valueMap = new Map()     // 记录值
+  this.useMap = new Map()       // 记录使用次数
+};
+
+/** 
+ * @param {number} key
+ * @return {number}
+ */
+LFUCache.prototype.get = function(key) {
+  if (this.valueMap.has(key)){       // 当存在时 删掉原来的重新添加  使用值加1
+    let use = this.useMap.get(key)
+    let value = this.valueMap.get(key)
+    this.valueMap.delete(key)
+    this.useMap.set(key, use + 1)
+    this.valueMap.set(key, value)
+    return value
+  } else {
+    return -1
+  }
+};
+
+/** 
+ * @param {number} key 
+ * @param {number} value
+ * @return {void}
+ */
+LFUCache.prototype.put = function(key, value) {
+  if(this.size === 0) return
+  let min = Math.min(...this.useMap.values())  // 缓存下 最小使用值
+  if (this.valueMap.has(key)) {                // 如果存在 值重新赋, use加一
+    this.valueMap.set(key, value)
+    let use = this.useMap.get(key)
+    this.useMap.set(key, use + 1)
+  } else {                                     // 不存在就直接加
+    this.valueMap.set(key, value)
+    this.useMap.set(key, 1)
+  }
+  // 当超出, 删掉不常用的 当碰到用的次数相同的删掉 较前未使用的
+  if(this.valueMap.size > this.size){
+    let it = this.valueMap.keys()              // 缓存 key 遍历器
+    let delKey = it.next().value
+    while(this.useMap.get(delKey) !== min){    // 获取使用值为 min 的key
+      delKey = it.next().value
+    }
+    this.useMap.delete(delKey)                 // 删掉该项
+    this.valueMap.delete(delKey)
+  }
+};
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * var obj = new LFUCache(capacity)
+ * var param_1 = obj.get(key)
+ * obj.put(key,value)
+ */
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * var obj = new LFUCache(capacity)
+ * var param_1 = obj.get(key)
+ * obj.put(key,value)
+ */
+
+let fnNames = ["LFUCache","put","put","get","get","put","get","get","get"]
+let args = [[2],[2,1],[3,2],[3],[2],[4,3],[2],[3],[4]]
+function fn(fnNames, args){
+  let res = [null]
+  let cache = new LFUCache(args[0][0]);
+  for(let i = 1; i < fnNames.length; i++){
+    let value = cache[fnNames[i]](...args[i]) || null
+    console.log(value, `${fnNames[i]}(${args[i]})的结果`)
+    res.push(value)
+  }
+  return res
+}
+
+console.log(fn(fnNames,args))
+
+
+</script>
