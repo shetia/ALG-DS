@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>验证回文字符串 Ⅱ</title>
+<link rel='stylesheet' href='../../util/css/index.css'>
+<script src='../../util/js/highlight/index.js'></script>
+</head>
+<body>
+  <a href='https://leetcode-cn.com/problems/valid-palindrome-ii/'>验证回文字符串 Ⅱ</a>
+  <pre class='hljs'>
+      给定一个非空字符串 s，最多删除一个字符。判断是否能成为回文字符串。
+     <code class='javascript'>
+
+      示例 1:
+      
+      输入: "aba"
+      输出: True
+      示例 2:
+      
+      输入: "abca"
+      输出: True
+      解释: 你可以删除c字符。
+      注意:
+      
+      字符串只包含从 a-z 的小写字母。字符串的最大长度是50000。
+     </code>
+  </pre>
+  <pre class="hljs">
+    如: s = 'abecebca'
+    先把两边对称相等的去掉 => 'becebc'
+    
+    然后看 去掉左 或 和右边 一个元素的的情况
+    
+    去掉左边一个=> 'ecebc', 判断是否为回文, (删了一个碍眼的就好判断好多)
+    
+    去掉右边一个=> 'beceb', 判断是否为回文
+    
+    只要其中有一种情况是 就为true了
+    <code class="javascript">
+      /**
+      * @param {string} s
+      * @return {boolean}
+      */
+      var validPalindrome = function(s) {
+        let num = 1
+        let left = 0
+        let right = s.length - 1
+        let list = s.split('')
+        // 先把两边对称相等的去掉 
+        while(left < right && num > 0){
+          if (list[left] === list[right]) {
+            list.shift()
+            list.pop()
+            right = right - 2     // 因为去掉首尾了, 总长度减2了, left不动, 
+          } else {      
+            num--
+          } 
+        }
+        if(list.length < 3) return true
+        // 然后看 去掉左 或 和右边 一个元素的的情况
+        let first = list.slice(1)
+        let last = list.slice(0,  - 1)
+        return isPalindrome(first) || isPalindrome(last)
+      };
+
+      // 判断是否是回文
+      function isPalindrome(list){
+        let left = 0
+        let right = list.length - 1
+        while(left < right){
+          if (list[left] === list[right]) {
+            list.shift()
+            list.pop()
+            right = right - 2
+          } else {
+            return false
+          }
+        }
+        return true
+      }
+    </code>
+  </pre>
+  <pre class="hljs">
+    <code class="javascript">
+      //操作数组有点费时, 换成字符串
+      var validPalindrome = function(s) {
+        let num = 1
+        let left = 0
+        let right = s.length - 1
+        while(left < right && num > 0){
+          if (s[left] === s[right]) {
+            left++
+            right--
+          } else {
+            num--
+          } 
+        }
+        s = s.slice(left, right + 1)
+        if(s.length < 3) return true
+        let first = s.slice(1)
+        let last = s.slice(0,  - 1)
+        return isPalindrome(first) || isPalindrome(last)
+      };
+      // 判断是否是回文
+      function isPalindrome(s){
+        let left = 0
+        let right = s.length - 1
+        while(left < right){
+          if (s[left] === s[right]) {
+            left++
+            right--
+          } else {
+            return false
+          }
+        }
+        return true
+      }
+    </code>
+  </pre>
+  <pre class="hljs">
+    <code class="javascript">
+      // 再改改
+      var validPalindrome = function(s, num = 1) {
+        let left = 0
+        let right = s.length - 1
+        while(left < right){
+          if (s[left] === s[right]) {
+            left++
+            right--
+          } else {
+            if(num > 0){
+              num--
+              break
+            } else {
+              return false
+            }
+          } 
+        }
+        s = s.slice(left, right + 1)
+        if(num && s.length < 3 || s.length < 2) return true
+        let first = s.slice(1)
+        let last = s.slice(0,  - 1)
+        
+        return validPalindrome(first, 0) || validPalindrome(last, 0)
+      };
+    </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+ var validPalindrome = function(s) {
+
+  let num = 1
+  let left = 0
+  let right = s.length - 1
+  let list = s.split('')
+  console.log(list, 'list')
+  while(left < right && num > 0){
+    if (list[left] === list[right]) {
+      list.shift()
+      list.pop()
+      right = right - 2
+    } else {
+      console.log(left, right)
+      num--
+    } 
+  }
+  console.log(list, 'list')
+  if(list.length < 3) return true
+  let first = list.slice(1)
+  let last = list.slice(0,  - 1)
+  
+  return isPalindrome(first) || isPalindrome(last)
+};
+
+function isPalindrome(list){
+  let left = 0
+  let right = list.length - 1
+  while(left < right){
+    if (list[left] === list[right]) {
+      list.shift()
+      list.pop()
+      right = right - 2
+    } else {
+      return false
+    }
+  }
+  return true
+}
+let s = 'abecebca'
+console.log(validPalindrome(s))
+</script>
