@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>最长回文子串</title>
+<link rel='stylesheet' href='../../util/css/index.css'>
+<script src='../../util/js/highlight/index.js'></script>
+</head>
+<body>
+  <a href='https://leetcode-cn.com/problems/longest-palindromic-substring/'>最长回文子串</a>
+  <pre class='hljs'>
+    给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+    <code class='javascript'>
+      示例 1：
+      
+      输入: "babad"
+      输出: "bab"
+      注意: "aba" 也是一个有效答案。
+      示例 2：
+      
+      输入: "cbbd"
+      输出: "bb"
+     </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {string} s
+ * @return {string}
+ */
+var longestPalindrome = function(s) {
+  let right = 1
+  let left = 0
+  let len = s.length 
+  let list = s.split('')
+  for(let i = 0; i < len - 1; i++){
+    for(let j = i + 1; j < len; j++){
+      if(j - i + 1 > right && isPalindrome(s.slice(i, j + 1))){
+        right = j - i + 1
+        left = i
+      }
+    }
+  }
+  return s.slice(left, left + right)
+};
+
+function isPalindrome (s){
+  let left = 0
+  let right = s.length - 1
+  while(left < right){
+    if(s[left] === s[right]){
+      left++
+      right--
+    }else{
+      return false
+    }
+  }
+  return true
+}
+
+
+
+
+var longestPalindrome = function (s) {
+    let len = s.length
+    let res = ''
+    for (let i = 0; i < len; i++) {
+        let j = 0
+        let start = i
+        while (s[i] == s[i + 1]) i++
+        while (j <= start && j + i < len && s[start - j] == s[i + j]) j++
+        let str = s.slice(start - j + 1, i + j)
+        if (str.length > res.length) res = str
+    }
+    return res
+};
+let s = "dababa"
+console.log(longestPalindrome(s))
+</script>
