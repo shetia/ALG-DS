@@ -1,0 +1,110 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-05-30 12:55:37
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-05-30 16:19:45
+-->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>柱状图中最大的矩形</title>
+<link rel='stylesheet' href='../../util/css/index.css'>
+<script src='../../util/js/highlight/index.js'></script>
+<style>
+  #tableBox{
+    background: #ccc;
+  }
+  td{
+    border-right: 1px solid #333;
+    border-bottom: 1px solid #333;
+    width:30px;
+    height: 30px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <a href='https://leetcode-cn.com/problems/largest-rectangle-in-histogram/'>柱状图中最大的矩形</a>
+  <pre class='hljs'>
+    给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+    求在该柱状图中，能够勾勒出来的矩形的最大面积。
+    <img src="./imgs/histogram.png" alt="">
+    以上是柱状图的示例，其中每个柱子的宽度为 1，给定的高度为 [2,1,5,6,2,3]。
+    <img src="./imgs/histogram_area.png" alt="">
+    图中阴影部分为所能勾勒出的最大矩形面积，其面积为 10 个单位。
+     <code class='javascript'>
+      示例:
+
+      输入: [2,1,5,6,2,3]
+      输出: 10
+     </code>
+  </pre>
+  <table id='tableBox' border="0" cellpadding="2" cellspacing="0">
+
+  </table>
+</body>
+</html>
+<script>
+/**
+ * @param {number[]} heights
+ * @return {number}
+ */
+// 暴力解法 超时
+var largestRectangleArea = function(heights) {
+  let left = 0
+  let right = heights.length - 1
+  let max = 0
+  while(right >= 0){
+    let arr = heights.slice(left, right + 1)
+    let h =  Math.min(...arr)
+    let w = (right - left + 1)
+    max =  Math.max(h * w, max)
+    left++
+    if(left > right){
+      left = 0
+      right--
+    }
+  }
+  return max
+};
+
+// 单调栈解法
+var largestRectangleArea = function(heights) {
+  let max = 0
+  let stack = []
+  let list = [0, ...heights, 0]
+  for(let i = 0; i < list.length; i++){
+    while (list[i] < list[stack[stack.length - 1]]){
+      let top = stack.pop()
+      let h = list[top]
+      let w = i - stack[stack.length - 1] - 1
+      max = Math.max(max, h * w)
+    }
+    stack.push(i)
+  }
+  return max
+};
+let heights = [5,5,1,7,1,1,5,2,7,6]
+console.log(largestRectangleArea(heights))
+
+let tableBox = document.getElementById('tableBox')
+let max = Math.max(...heights)
+for(let i = max; i > 0; i--){
+  let tr = document.createElement('tr')
+  for(let j = 0; j < heights.length; j++){
+    let td = document.createElement('td')
+    if(i <= heights[j]){
+      td.style.background = 'hotpink'
+    }
+    td.innerHTML = [j, i]
+    tr.appendChild(td)
+  }
+  tableBox.appendChild(tr)
+}
+</script>
