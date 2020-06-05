@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title> 顺时针打印矩阵</title>
+<link rel='stylesheet' href='../../util/css/index.css'>
+<script src='../../util/js/highlight/index.js'></script>
+</head>
+<body>
+  <a href='https://leetcode-cn.com/problems/shun-shi-zhen-da-yin-ju-zhen-lcof/'> 顺时针打印矩阵</a>
+  <pre class='hljs'>
+    输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+    <code class='javascript'>
+      示例 1：
+
+      输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+      输出：[1,2,3,6,9,8,7,4,5]
+      示例 2：
+
+      输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+      输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+       
+
+      限制：
+
+      0 <= matrix.length <= 100
+      0 <= matrix[i].length <= 100
+     </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number[][]} matrix
+ * @return {number[]}
+ */
+/**
+ * 跟机器人走路差不多, 先向右走, 把走过的地方标记,(走过的地方也就变成了边界),
+
+碰到边界 就 转向下, 继续, 碰到又转左, 继续, 碰到又转上, 碰到转右...直到所有地方都走过
+ * 
+*/
+var spiralOrder = function(matrix) {
+  let res = []
+  let i = 0, j = 0
+  while(matrix[i] && matrix[i][j] !== undefined){
+  
+    while(matrix[i] && matrix[i][j + 1] !== undefined){
+      res.push(matrix[i][j])
+      matrix[i][j] = undefined
+      j++
+    }
+    while(matrix[i + 1] && matrix[i + 1][j] !== undefined){
+      res.push(matrix[i][j])
+      matrix[i][j] = undefined
+      i++
+    }
+    while(matrix[i] &&　matrix[i][j - 1] !== undefined){
+      res.push(matrix[i][j])
+      matrix[i][j] = undefined
+      j--
+    }
+    while(matrix[i - 1] && matrix[i - 1][j] !== undefined){
+      res.push(matrix[i][j])
+      matrix[i][j] = undefined
+      i--
+    }
+    res.push(matrix[i][j])
+    matrix[i][j] = undefined
+    if(matrix[i] && matrix[i][j + 1] !== undefined){  // 右
+      j++
+    } else if (matrix[i + 1] && matrix[i + 1][j] !== undefined) { // 下
+      i++
+    } else if (matrix[i] &&　matrix[i][j - 1] !== undefined){ // 左
+      j--
+    } else if (matrix[i - 1] && matrix[i - 1][j] !== undefined){ // 上
+      i--
+    }
+  }
+  return res
+};
+
+// 方法2: 旋转矩阵
+var spiralOrder = function(matrix) {
+  let res = []
+  while(matrix.length > 0){
+    let head = matrix.shift()
+    res.push(...head)
+    matrix = rotate(matrix)
+  }
+  return res
+}
+var rotate = function(m) {
+  if(m.length <= 0) return m
+  let matrix = [...m]
+  let res = []
+  for(let i = matrix[0].length - 1; i >= 0 ; i--){
+    let list = []
+    for(let j = 0; j < matrix.length; j++){
+      list.push(matrix[j][i])
+    }
+    res.push(list)
+  }
+  return res
+};
+
+// let matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+// let matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]
+// let matrix = [[1,2,3],[4,5,6],[7,8,9]]
+// let matrix = [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10]]
+// let matrix = [[6,9,7]]
+// let matrix = [[1,11],[2,12],[3,13],[4,14],[5,15],[6,16],[7,17],[8,18],[9,19],[10,20]]
+// let matrix = [[2,5],[8,4],[0,-1]]
+let matrix = [[2,3,4],[5,6,7],[8,9,10],[11,12,13]]
+
+console.log(spiralOrder(matrix))
+</script>
