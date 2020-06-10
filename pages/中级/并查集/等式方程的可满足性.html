@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>等式方程的可满足性</title>
+    <link rel="stylesheet" href="../../../util/css/index.css" />
+    <script src="../../../util/js/highlight/index.js"></script>
+  </head>
+  <body>
+    <a
+      href="https://leetcode-cn.com/problems/satisfiability-of-equality-equations/"
+      >等式方程的可满足性
+    </a>
+    <pre class="hljs">
+    给定一个由表示变量之间关系的字符串方程组成的数组，每个字符串方程 equations[i] 的长度为 4，并采用两种不同的形式之一："a==b" 或 "a!=b"。在这里，a 和 b 是小写字母（不一定不同），表示单字母变量名。
+
+    只有当可以将整数分配给变量名，以便满足所有给定的方程时才返回 true，否则返回 false。 
+    
+    <code class='javascript'>
+      示例 1：
+      
+      输入：["a==b","b!=a"]
+      输出：false
+      解释：如果我们指定，a = 1 且 b = 1，那么可以满足第一个方程，但无法满足第二个方程。没有办法分配变量同时满足这两个方程。
+      示例 2：
+      
+      输出：["b==a","a==b"]
+      输入：true
+      解释：我们可以指定 a = 1 且 b = 1 以满足满足这两个方程。
+      示例 3：
+      
+      输入：["a==b","b==c","a==c"]
+      输出：true
+      示例 4：
+      
+      输入：["a==b","b!=c","c==a"]
+      输出：false
+      示例 5：
+      
+      输入：["c==c","b==d","x!=z"]
+      输出：true
+       
+      
+      提示：
+      
+      1 <= equations.length <= 500
+      equations[i].length == 4
+      equations[i][0] 和 equations[i][3] 是小写字母
+      equations[i][1] 要么是 '='，要么是 '!'
+      equations[i][2] 是 '='
+    </code>
+  </pre>
+  </body>
+</html>
+<script>
+  /**
+   * @param {string[]} equations
+   * @return {boolean}
+   */
+
+  // 方法一: 并查集
+  var equationsPossible = (equations) => {
+    const uf = new UnionFind(26)
+    for (const e of equations) {
+      // 将字母对应成数字
+      if (e[1] === '=') uf.union(e.charCodeAt(0) - 97, e.charCodeAt(3) - 97)
+    }
+    console.log(uf)
+    for (const e of equations) {
+      if (
+        e[1] == '!' &&
+        uf.findRoot(e.charCodeAt(0) - 97) == uf.findRoot(e.charCodeAt(3) - 97)
+      )
+        return false
+    }
+    return true
+  }
+
+  class UnionFind {
+    constructor(num) {
+      // num 顶点个数
+      this.roots = new Array(num)
+      this.ranks = new Array(num)
+      for (let i = 0; i < num; i++) {
+        this.roots[i] = -1
+        this.ranks[i] = 0
+      }
+    }
+    findRoot(x) {
+      // 找出顶点x的根节点
+      let x_root = x
+      while (this.roots[x_root] !== -1) {
+        // 一直找父节点，找到尽头
+        x_root = this.roots[x_root]
+      }
+      return x_root // 返回根节点
+    }
+    union(x, y) {
+      // 把顶点x和顶点y合并到一起
+      let x_root = this.findRoot(x)
+      let y_root = this.findRoot(y)
+      if (x_root === y_root) return
+      let x_rank = this.ranks[x_root]
+      let y_rank = this.ranks[y_root]
+      if (x_rank < y_rank) {
+        // 谁高度大，谁就作为root
+        this.roots[x_root] = y_root
+      } else if (y_rank < x_rank) {
+        this.roots[y_root] = x_root
+      } else {
+        // 一样深，谁作为root都行
+        this.roots[y_root] = x_root
+        this.ranks[x_root]++
+      }
+    }
+  }
+
+
+
+
+
+
+
+
+
+  // 把相同的 合成一个集合, 再判断!= 的, 存在矛盾就是false
+  var equationsPossible = (equations) => {
+    let mfs = new MergeFindSet(26)
+    // 把相同的 合成一个集合
+    for (let e of equations) {
+      if (e[1] === '=') {
+        mfs.merge(e[0], e[3])
+      }
+    }
+    console.log(JSON.stringify(mfs.codes))
+    // 找矛盾
+    for(let e of equations){
+      if(e[1] === '!' && mfs.find(e[0]) === mfs.find(e[3])) {
+        return false
+      }
+    }
+    return true
+    
+  }
+  // 并查集构造函数
+  function MergeFindSet (n) {
+    this.codes = {}
+    for(let i = 0; i < n; i++){
+      let prop = String.fromCharCode(i + 97)
+      this.codes[prop] = prop
+    }
+    console.log(JSON.stringify(this.codes))
+  }
+  // 合并集合
+  MergeFindSet.prototype.merge = function(a, b){
+    let ar = this.find(a)
+    let br = this.find(b)
+    // 同一集合不做处理 直接返回
+    if(ar === br) return
+    // 不同集合就合并, 把其中一个的根节点指向另一个的根节点
+    this.codes[ar] = br
+  }
+  // 找根节点
+  MergeFindSet.prototype.find = function (m){
+    let mr = m
+    while (this.codes[mr] !== mr) { // 等于null 表示没有父节点了, 自身就是父节点了
+      mr = this.codes[mr]
+    }
+    return this.codes[mr]
+  }
+
+ 
+  // let equations = ["b==d","c==a","h==a","d==d","a==b","h!=k","i==h"]
+  let equations = ["f==d","b!=e","d!=c","b==c","b!=a","b!=f"]
+  // var equations = [
+  //   'i!=c',
+  //   'i!=f',
+  //   'k==j',
+  //   'g==e',
+  //   'h!=e',
+  //   'h==d',
+  //   'j==e',
+  //   'k==a',
+  //   'i==h',
+  // ]
+  // equations = ['a==b', 'a!=b']
+  console.log(equations)
+  console.log(equationsPossible(equations))
+</script>

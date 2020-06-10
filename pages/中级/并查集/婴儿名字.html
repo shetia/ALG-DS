@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>婴儿名字</title>
+  <link rel='stylesheet' href='../../../util/css/index.css'>
+  <script src='../../../util/js/highlight/index.js'></script>
+</head>
+<body>
+  <a href='https://leetcode-cn.com/problems/baby-names-lcci/'>婴儿名字</a>
+  <pre class='hljs'>
+    每年，政府都会公布一万个最常见的婴儿名字和它们出现的频率，也就是同名婴儿的数量。
+    有些名字有多种拼法，例如，John 和 Jon 本质上是相同的名字，但被当成了两个名字公布出来。
+    给定两个列表，一个是名字及对应的频率，另一个是本质相同的名字对。
+    设计一个算法打印出每个真实名字的实际频率。
+    注意，如果 John 和 Jon 是相同的，并且 Jon 和 Johnny 相同，则 John 与 Johnny 也相同，即它们有传递和对称性。
+
+    在结果列表中，选择字典序最小的名字作为真实名字。
+
+    字典序（dictionary order），又称 字母序（alphabetical order），原意是表示英文单词在字典中的先后顺序，在计算机领域中扩展成两个任意字符串的大小关系。
+    <code class='javascript'>
+      示例：
+      
+      输入：names = ["John(15)","Jon(12)","Chris(13)","Kris(4)","Christopher(19)"], 
+            synonyms = ["(Jon,John)","(John,Johnny)","(Chris,Kris)","(Chris,Christopher)"]
+      输出：["John(27)","Chris(36)"]
+
+      提示：
+      names.length <= 100000
+    </code>
+  </pre>
+  <pre class='hljs'>
+    <code class='javascript'>
+      本来思路就挺简单的: 就是 分别把所有相似的名字 归为同一集合中, **以字典序最小的为根**, 再 **以根为名** 合并相似名字的次数就行了
+
+      字典序，原意是表示英文单词在字典中的先后顺序，在计算机领域中扩展成两个任意字符串的大小关系。
+
+
+      如: 'abc' < 'bac'
+
+      //如  
+          names = ["shetia(27)", "John(15)","Jon(12)","Chris(13)","Kris(4)","Christopher(19)"]
+          synonyms = ["(Jon,John)","(John,Johnny)","(Chris,Kris)","(Chris,Christopher)"]
+
+      归类:
+          'shetia'                      为一类   其中 shetia 字典序最小
+          'Jon' 'John' 'Johnny'         为一类   其中 John 字典序最小
+          'Chris' 'Kris' 'Christopher'  为一类   其中 Chris 字典序最小
+
+      合并次数, 以字典序最小的为名: 
+
+          shetia 27
+          John   15 + 12 = 27
+          chris  13 + 4 + 19 = 36
+
+      得  ["shetia(27)", "John(27)", "Chris(36)"]
+
+
+      那么, 现在问题来了! 怎么归类呢?
+
+      这就要用到并查集的思想了
+
+      // 如
+      names = ["shetia(27)", "John(15)","Jon(12)","Chris(13)","Kris(4)","Christopher(19)"]
+      synonyms = ["(Jon,John)","(John,Johnny)","(Chris,Kris)","(Chris,Christopher)"]
+
+      循环两个数组, 我们可以拿到所有名字 = ["shetia", "John", "Jon", "Chris", "Kris", "Christopher", "Johnny"]
+
+      初始化root, 把名字指向自身
+
+      root = {"shetia":"shetia","John":"John","Jon":"Jon","Chris":"Chris","Kris":"Kris","Christopher":"Christopher","Johnny":"Johnny"}
+
+      循环synonyms, 每一项都有一对名字, 我们让它们 从字典序大的指向字典序小的  如: Jon => John, Johnny => John
+
+      可以得到
+        root = {
+          Chris: "Chris",
+          Christopher: "Chris",
+          John: "John",
+          Johnny: "John",
+          Jon: "John",
+          Kris: "Chris",
+          shetia: "shetia"
+        }
+
+      现在, 明显 值相同的就为一类 (或者间接值相同, 所以就要find根)
+
+      什么叫间接相同
+
+      如　obj = {
+          a: 'a',
+          b: 'a',
+          c: 'b'
+        }
+      这c就和a间接相同, a为c的根
+    </code>
+  </pre>
+</body>
+</html>
+<script>
+class MFS {
+  constructor(arr){
+    this.root = {}
+    arr.forEach(name => {
+      this.root[name] = name
+    })
+    console.log(JSON.stringify(this.root), 'root')
+  }
+  merge (a, b) {
+    let ar = this.find(a)
+    let br = this.find(b)
+    if(ar === br) return
+    if(ar > br){
+      this.root[ar] = br
+    } else {
+      this.root[br] = ar
+    }
+  }
+  find (m) {
+    let mr = m
+    while(this.root[mr] !== mr){
+      mr = this.root[mr]
+    }
+    return mr
+  }
+}
+/**
+ * @param {string[]} names
+ * @param {string[]} synonyms
+ * @return {string[]}
+ */
+  var trulyMostPopular = function(names, synonyms) {
+    // 获取全部名字, 因为 有几种情况 names中有的 synonyms中没有,  synonyms有的 names中没有.. 得循环names,synonyms拿到所有名字
+    let set = new Set()
+    for (let n of names) {
+      let a = n.split('(')[0]
+      set.add(a)
+    }
+    for (let s of synonyms) {
+      let a = s.split(',')[0].slice(1)
+      let b = s.split(',')[1].slice(0, -1)
+      set.add(a)
+      set.add(b)
+    }
+    let list = [...set]
+    console.log(list, 'list')
+    let mfs = new MFS(list)
+
+    // 把类似的合并到同一集合
+    for (let s of synonyms) {
+      let a = s.split(',')[0].slice(1)
+      let b = s.split(',')[1].slice(0, -1)
+      mfs.merge(a,b)
+    }
+    console.log(mfs.root)
+    let obj = {}
+
+    // 把类型的次数合并
+    for(let n of names){
+      let m = n.split('(')[0]
+      let name = mfs.find(m)
+      let times = +(n.split('(')[1].slice(0, -1))
+      obj[name] =(obj[name] || 0) + times
+    }
+    let res = []
+    for(let prop in obj){
+      res.push(`${prop}(${obj[prop]})`)
+    }
+    return res
+  }
+
+  
+  let names = ["shetia(27)", "John(15)","Jon(12)","Chris(13)","Kris(4)","Christopher(19)"], 
+      synonyms = ["(Jon,John)","(John,Johnny)","(Chris,Kris)","(Kris,Christopher)"]
+
+      // names =  ["Fcclu(70)","Ommjh(63)","Dnsay(60)","Qbmk(45)","Unsb(26)","Gauuk(75)","Wzyyim(34)","Bnea(55)","Kri(71)","Qnaakk(76)","Gnplfi(68)","Hfp(97)","Qoi(70)","Ijveol(46)","Iidh(64)","Qiy(26)","Mcnef(59)","Hvueqc(91)","Obcbxb(54)","Dhe(79)","Jfq(26)","Uwjsu(41)","Wfmspz(39)","Ebov(96)","Ofl(72)","Uvkdpn(71)","Avcp(41)","Msyr(9)","Pgfpma(95)","Vbp(89)","Koaak(53)","Qyqifg(85)","Dwayf(97)","Oltadg(95)","Mwwvj(70)","Uxf(74)","Qvjp(6)","Grqrg(81)","Naf(3)","Xjjol(62)","Ibink(32)","Qxabri(41)","Ucqh(51)","Mtz(72)","Aeax(82)","Kxutz(5)","Qweye(15)","Ard(82)","Chycnm(4)","Hcvcgc(97)","Knpuq(61)","Yeekgc(11)","Ntfr(70)","Lucf(62)","Uhsg(23)","Csh(39)","Txixz(87)","Kgabb(80)","Weusps(79)","Nuq(61)","Drzsnw(87)","Xxmsn(98)","Onnev(77)","Owh(64)","Fpaf(46)","Hvia(6)","Kufa(95)","Chhmx(66)","Avmzs(39)","Okwuq(96)","Hrschk(30)","Ffwni(67)","Wpagta(25)","Npilye(14)","Axwtno(57)","Qxkjt(31)","Dwifi(51)","Kasgmw(95)","Vgxj(11)","Nsgbth(26)","Nzaz(51)","Owk(87)","Yjc(94)","Hljt(21)","Jvqg(47)","Alrksy(69)","Tlv(95)","Acohsf(86)","Qejo(60)","Gbclj(20)","Nekuam(17)","Meutux(64)","Tuvzkd(85)","Fvkhz(98)","Rngl(12)","Gbkq(77)","Uzgx(65)","Ghc(15)","Qsc(48)","Siv(47)"]
+      // synonyms = ["(Gnplfi,Qxabri)","(Uzgx,Siv)","(Bnea,Lucf)","(Qnaakk,Msyr)","(Grqrg,Gbclj)","(Uhsg,Qejo)","(Csh,Wpagta)","(Xjjol,Lucf)","(Qoi,Obcbxb)","(Npilye,Vgxj)","(Aeax,Ghc)","(Txixz,Ffwni)","(Qweye,Qsc)","(Kri,Tuvzkd)","(Ommjh,Vbp)","(Pgfpma,Xxmsn)","(Uhsg,Csh)","(Qvjp,Kxutz)","(Qxkjt,Tlv)","(Wfmspz,Owk)","(Dwayf,Chycnm)","(Iidh,Qvjp)","(Dnsay,Rngl)","(Qweye,Tlv)","(Wzyyim,Kxutz)","(Hvueqc,Qejo)","(Tlv,Ghc)","(Hvia,Fvkhz)","(Msyr,Owk)","(Hrschk,Hljt)","(Owh,Gbclj)","(Dwifi,Uzgx)","(Iidh,Fpaf)","(Iidh,Meutux)","(Txixz,Ghc)","(Gbclj,Qsc)","(Kgabb,Tuvzkd)","(Uwjsu,Grqrg)","(Vbp,Dwayf)","(Xxmsn,Chhmx)","(Uxf,Uzgx)"]
+  console.log(trulyMostPopular(names, synonyms))
+
+
+  // ["Fcclu(70)","Dnsay(72)","Qbmk(45)","Unsb(26)","Gauuk(75)","Gnplfi(109)","Hfp(97)","Obcbxb(124)","Ijveol(46)","Fpaf(219)","Qiy(26)","Mcnef(59)","Dhe(79)","Jfq(26)","Ebov(96)","Ofl(72)","Uvkdpn(71)","Avcp(41)","Chycnm(253)","Koaak(53)","Qyqifg(85)","Oltadg(95)","Mwwvj(70)","Naf(3)","Ibink(32)","Ucqh(51)","Mtz(72)","Ard(82)","Hcvcgc(97)","Knpuq(61)","Yeekgc(11)","Ntfr(70)","Bnea(179)","Weusps(79)","Nuq(61)","Drzsnw(87)","Chhmx(259)","Onnev(77)","Kufa(95)","Avmzs(39)","Okwuq(96)","Hljt(51)","Npilye(25)","Axwtno(57)","Kasgmw(95)","Nsgbth(26)","Nzaz(51)","Msyr(211)","Yjc(94)","Jvqg(47)","Alrksy(69)","Aeax(646)","Acohsf(86)","Csh(238)","Nekuam(17)","Kgabb(236)","Fvkhz(104)","Gbkq(77)","Dwifi(237)"]
+
+  // ["Fcclu(70)", "Chycnm(253)", "Dnsay(72)", "Qbmk(45)", "Unsb(26)", "Gauuk(75)", "Fpaf(219)", "Bnea(179)", "Kgabb(236)", "Msyr(211)", "Gnplfi(109)", "Hfp(97)", "Obcbxb(124)", "Ijveol(46)", "Qiy(26)", "Mcnef(59)", "Csh(238)", "Dhe(79)", "Jfq(26)", "Aeax(646)", "Ebov(96)", "Ofl(72)", "Uvkdpn(71)", "Avcp(41)", "Chhmx(259)", "Koaak(53)", "Qyqifg(85)", "Oltadg(95)", "Mwwvj(70)", "Dwifi(237)", "Naf(3)", "Ibink(32)", "Ucqh(51)", "Mtz(72)", "Ard(82)", "Hcvcgc(97)", "Knpuq(61)", "Yeekgc(11)", "Ntfr(70)", "Weusps(79)", "Nuq(61)", "Drzsnw(87)", "Onnev(77)", "Fvkhz(104)", "Kufa(95)", "Avmzs(39)", "Okwuq(96)", "Hljt(51)", "Npilye(25)", "Axwtno(57)", "Kasgmw(95)", "Nsgbth(26)", "Nzaz(51)", "Yjc(94)", "Jvqg(47)", "Alrksy(69)", "Acohsf(86)", "Nekuam(17)", "Gbkq(77)"]
+
+</script>
