@@ -66,7 +66,7 @@
     return func(n)
   }
 
-  // 非递归解法
+  // 非递归解法 动态规划
   var numWays = function(n) {
     if(n<=0) return 1
     if(n<=2) return n
@@ -89,5 +89,14 @@
     }
     return b
   }
+  var numWays = function(n) {
+    let dp = Array(n)
+    dp[1] = dp[0] = 1
+    dp[2] = 2
+    for(let i = 3; i <= n; i++){
+      dp[i] = (dp[i - 1] + dp[i - 2] ) % 1000000007
+    }
+    return dp[n]
+  };
   console.log(jump(10))
 </script>
