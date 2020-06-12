@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title></title>
+<link rel='stylesheet' href='./css/index.css'>
+<script src='./js/highlight/index.js'></script>
+</head>
+<body>
+  <img src="../imgs/二叉树.png" alt="">
+  <img src="../imgs/二叉树遍历.png" alt="">
+  <a href=''></a>
+  <pre class='hljs'>
+     <code class='javascript'>
+     </code>
+  </pre>
+</body>
+</html>
+<script>
+class BinaryNode {
+  constructor(key){
+    this.key = key
+    this.left = null
+    this.right = null
+  }
+}
+class BinarySearchTree {
+  constructor(){
+    this.root = null
+  }
+  /* 插入节点 */
+  inset (key) {
+    let node = new BinaryNode(key)
+    let insertNode = function (root, newNode){
+      if (root.key > newNode.key) { // 插入的节点值比根小, 放在左边
+        if(root.left === null){  // 没有就直接赋值
+          root.left = newNode 
+        } else {                 // 有就继续递归
+          insertNode(root.left, newNode)
+        }
+      } else { // 大 放在右边
+        if(root.right === null){
+          root.right = newNode
+        } else {
+          insertNode(root.right, newNode)
+        }
+      }
+    }
+    if(this.root === null){
+      this.root = node
+    } else {
+      insertNode(this.root, node)
+    }
+  }
+  /* 中序遍历 是一种以上行顺序访问BST所有节点的遍历方式，也就是以从最小到最大的顺序访问所有节点*/
+  inOrderTraverse (cb) {
+    let inOrderTraverseNode = function (node, cb) {
+      if(!node) return 
+      inOrderTraverseNode(node.left, cb)
+      cb(node.key)
+      inOrderTraverseNode(node.right, cb)
+    }
+    inOrderTraverseNode(this.root, cb)
+  }
+  /* 先序遍历  是以优先于后代节点的顺序访问每个节点的 */
+  preOrderTraverse (cb) {
+    let preOrderTraverseNode = function (node, cb) {
+      if(!node) return
+      cb(node.key)
+      preOrderTraverseNode(node.left, cb)
+      preOrderTraverseNode(node.right, cb)
+    }
+    preOrderTraverseNode(this.root, cb)
+  }
+  /* 后序遍历 则是先访问节点的后代节点，再访问节点本身 */
+  postOrderTraverse (cb) {
+    let postOrderTraverseNode = function (node, cb){
+      if(!node) return 
+      postOrderTraverseNode(node.left, cb)
+      postOrderTraverseNode(node.right, cb)
+      cb(node.key)
+    }
+    postOrderTraverseNode(this.root, cb)
+  }
+  /* 最小值 */
+  min () {
+    let minNode = function (node) {
+      if(!node) return
+      while(node && node.left){
+        node = node.left
+      }
+      return node.key
+    }
+    return minNode(this.root)
+  }
+  /* 最大值 */
+  max () {
+    let maxNode = function (node) {
+      if(!node) return
+      while(node && node.right){
+        node = node.right
+      }
+      return node.key
+    }
+    return maxNode (this.root)
+  }
+  /* 搜索一个特定的值 */
+  search (key) {
+    let searchNode = function (node, key){
+      if(!node) return false
+      if(node.key === key) {
+        return true
+      } else if (node.key > key) {  // 当前节点值 比key大 ,继续往左边找
+        return searchNode(node.left, key)
+      } else {
+        return searchNode(node.right, key)
+      }
+    }
+    return searchNode(this.root, key)
+  }
+  /* 删除节点 */
+  remove (key) {
+    // 查找最小节点
+    let findMinNode = function (node) {
+      while(node && node.left) {
+        node = node.left
+      }
+      return node
+    }
+    // 删除节点
+    let removeNode = function (node, key) {
+      if(!node) return null
+      if (key < node.key) { // 要删的节点比当前节点小, 说明要删的在左边
+        node.left = removeNode(node.left, key)
+        return node
+      } else if (key > node.key) { // 要删的节点比当前节点大, 说明要删的在右边
+        node.right = removeNode(node.right, key)
+        return node
+      } else { // key等于当前节点
+        // 1. 当前节点没有左右节点
+        if (!node.left && !node.right) { 
+          node = null
+          return node
+        } 
+        // 2. 只有一个子节点的情况
+        if(!node.left || !node.right){
+          node = node.right ? node.right : node.left
+          return node
+        }
+        // 3. 左右节点都有的情况 把当前节点的值换成右树的最小值 然后就相当于 把右树的最小节点删除
+        let minNode = findMinNode(node.right)
+        console.log(minNode.key, 'minNode.key')
+        node.key = minNode.key
+        node.right = removeNode(node.right, minNode.key)
+        return node
+      }
+    }
+    this.root = removeNode(this.root, key)
+  }
+}
+
+let binaryTree = new BinarySearchTree()
+let list = [7,8,6,1,2,3,4,5,1]
+
+for(let i = 0; i < list.length; i++){
+  binaryTree.inset(list[i])
+}
+
+let arr = []
+binaryTree.inOrderTraverse(function (e){
+  arr.push(e)
+})
+let arr1 = []
+binaryTree.preOrderTraverse(function (e){
+  arr1.push(e)
+})
+let arr2 = []
+binaryTree.postOrderTraverse(function (e){
+  arr2.push(e)
+})
+console.log(list, '初始数组')
+console.log(arr, '中序遍历')
+console.log(arr1, '先序遍历')
+console.log(arr2, '后序遍历')
+console.log(binaryTree.min(), '最小值')
+console.log(binaryTree.max(), '最大值')
+console.log(binaryTree.search(5), '查找')
+console.log(binaryTree.remove(7), '删除')
+console.log(binaryTree.root)
+</script>
