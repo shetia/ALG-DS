@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>验证回文串</title>
+<link rel='stylesheet' href='../../util/css/index.css'>
+<script src='../../util/js/highlight/index.js'></script>
+</head>
+<body>
+  <a href=''>验证回文串</a>
+  <pre class='hljs'>
+    给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+
+    说明：本题中，我们将空字符串定义为有效的回文串。
+
+    <code class='javascript'>
+      示例 1:
+      
+      输入: "A man, a plan, a canal: Panama"
+      输出: true
+      示例 2:
+      
+      输入: "race a car"
+      输出: false
+     </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+  var isPalindrome = function(s) {
+    if(!s) return true
+    let str = s.replace(/\W/g, '').toLowerCase()
+    let left = 0
+    let right = str.length - 1
+    while(left < right){
+      if(str[left] !== str[right]) return false
+      left++
+      right--
+    }
+    console.log(str)
+    return true
+  };
+  let s = "A man, a plan, a canal: Panama"
+  console.log(isPalindrome(s))
+</script>

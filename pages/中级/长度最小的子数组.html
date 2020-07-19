@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>长度最小的子数组</title>
+<link rel='stylesheet' href='../../util/css/index.css'>
+<script src='../../util/js/highlight/index.js'></script>
+</head>
+<body>
+  <a href='https://leetcode-cn.com/problems/minimum-size-subarray-sum/'>长度最小的子数组</a>
+  <pre class='hljs'>
+    给定一个含有 n 个正整数的数组和一个正整数 s ，找出该数组中满足其和 ≥ s 的长度最小的连续子数组，并返回其长度。如果不存在符合条件的连续子数组，返回 0。
+
+    <code class='javascript'>
+      示例: 
+      
+      输入: s = 7, nums = [2,3,1,2,4,3]
+      输出: 2
+      解释: 子数组 [4,3] 是该条件下的长度最小的连续子数组。
+    </code>
+    进阶:
+    
+    如果你已经完成了O(n) 时间复杂度的解法, 请尝试 O(n log n) 时间复杂度的解法。
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number} s
+ * @param {number[]} nums
+ * @return {number}
+ */
+var minSubArrayLen = function(s, nums) {
+  let len = nums.length
+  if(!len || nums.reduce((a,b) => a + b) < s) return 0
+  let size = s
+  let left = 0
+  let right = 0
+  let total = 0
+  while (right < len) {
+    while(total < s && right < len) {
+      total += nums[right++]
+    }
+    while(total >= s && left >= 0) {
+      size = Math.min(size, right - left)
+      total -= nums[left++]
+    }
+  }
+
+  return size
+};
+let s = 7, nums = [2,4,1,2,4,3,2]
+// s = 11
+// nums = [1,2,3,4,5]
+console.log(minSubArrayLen(s, nums))
+</script>
