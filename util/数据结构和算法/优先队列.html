@@ -1,0 +1,119 @@
+<!--
+ * @Descripttion:
+ * @version:
+ * @Author: shetia
+ * @Date: 2020-07-19 20:32:45
+ * @LastEditors: somebody
+ * @LastEditTime: 2020-07-19 21:15:03
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+class QueueElement {
+  constructor(val, p){
+    this.val = val
+    this.p = p
+  }
+}
+//最大优先队列
+// class PriorityQueue {
+//   constructor(){
+//     this.items = []
+//   }
+//   enqueue(val, p){
+//     let qe = new QueueElement(val, p)
+//     let added = false
+//     for(let i = 0; i < this.items.length; i++){
+//       if(this.items[i].p < qe.p){
+//         this.items.splice(i, 0, qe)
+//         added = true
+//         break
+//       }
+//     }
+//     if(!added){
+//       this.items.push(qe)
+//     }
+//   }
+//   dequeue () {
+//     return this.items.shift()
+//   }
+//   front () {
+//     return this.items[0]
+//   }
+//   isEmpty () {
+//     return !this.items.length
+//   }
+//   size () {
+//     return this.items.length
+//   }
+//   print () {
+//     let str = ''
+//     for(let i = 0; i < this.items.length; i++){
+//       str +=  `${this.items[i].val}:${this.items[i].p}--`
+//     }
+//     return str
+//   }
+// }
+// let pq = new PriorityQueue()
+// pq.enqueue(3,5)
+// pq.enqueue(2,6)
+// pq.enqueue(1,8)
+// pq.enqueue(4,7)
+// // pq.dequeue()
+// pq.enqueue(8, 10)
+// pq.enqueue(9, 1)
+// console.log(pq.print())
+
+
+// 最小优先队列
+function PriorityQueue () {
+  items = []
+  this.add = function (n) {
+    let added = false
+    for(let i = 0; i < items.length; i++){
+      if(items[i] > n){
+        items.splice(i, 0, n)
+        added = true
+        break
+      }
+    }
+    if(!added){
+      items.push(n)
+    }
+  }
+  this.del = function(){
+    return items.shift()
+  }
+  this.size = function () {
+    return items.length
+  }
+  this.front = function () {
+    return items[0]
+  }
+  this.print = function (){
+    let str = ''
+    for(let i = 0; i < items.length; i++){
+      str += `${items[i]}--`
+    }
+    return str
+  }
+}
+
+let pq = new PriorityQueue()
+pq.add(3)
+pq.add(2)
+pq.add(5)
+pq.add(7)
+pq.del()
+console.log(pq.print())
+</script>
