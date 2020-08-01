@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>最小区间</title>
+  <link rel='stylesheet' href='../../util/css/index.css'>
+  <script src='../../util/js/highlight/index.js'></script>
+</head>
+
+<body>
+  <a href='https://leetcode-cn.com/problems/smallest-range-covering-elements-from-k-lists/'>最小区间</a>
+  <pre class='hljs'>
+      你有 k 个升序排列的整数数组。找到一个最小区间，使得 k 个列表中的每个列表至少有一个数包含在其中。
+
+      我们定义如果 b-a < d-c 或者在 b-a == d-c 时 a < c，则区间 [a,b] 比 [c,d] 小。
+
+      <code class='javascript'>
+          示例 1:
+
+          输入:[[4,10,15,24,26], [0,9,12,20], [5,18,22,30]]
+          输出: [20,24]
+          解释:
+          列表 1：[4, 10, 15, 24, 26]，24 在区间 [20,24] 中。
+          列表 2：[0, 9, 12, 20]，20 在区间 [20,24] 中。
+          列表 3：[5, 18, 22, 30]，22 在区间 [20,24] 中。
+          注意:
+
+          给定的列表可能包含重复元素，所以在这里升序表示 >= 。
+          1 <= k <= 3500
+          -105 <= 元素的值 <= 105
+          对于使用Java的用户，请注意传入类型已修改为List<List<Integer>>。重置代码模板后可以看到这项改动。
+
+    </code>
+    <code class='javascript'>
+    </code>
+  </pre>
+</body>
+
+</html>
+<script>
+  /**
+   * @param {number[][]} nums
+   * @return {number[]}
+   */
+  // 暴力  数据大超时
+  var smallestRange = function (nums) {
+    let list = []
+    let m = nums.length
+    if (!m) return []
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < nums[i].length; j++) {
+        list.push({
+          val: nums[i][j],
+          idx: i
+        })
+      }
+    }
+    list.sort((a, b) => a[0] - b[0])
+    console.log(list)
+    let res = [],
+      temp = [],
+      indexs = []
+    for (let item of list) {
+      temp.push(item.val)
+      indexs.push(item.idx)
+      while (indexs.length >= m && allIn(indexs, m)) {
+        let range = [temp[0], temp[temp.length - 1]]
+        res = res.length ? findMin(...res, ...range) : range
+        temp.shift()
+        indexs.shift()
+      }
+    }
+    return res
+  };
+
+  function findMin(a, b, c, d) {
+    return (b - a <= d - c && a <= c) ? [a, b] : [c, d]
+  }
+
+  function allIn(arr, m) {
+    return new Set(arr).size === m
+  }
+
+  // 方法2:
+  var smallestRange = function (nums) {
+    const arr = [];
+    for (let i = 0; i < nums.length; i++) {
+      for (let j = 0; j < nums[i].length; j++) {
+        arr.push([nums[i][j], i]);
+      }
+    }
+    arr.sort((a, b) => a[0] - b[0]);
+    let left = 0, right = 0;
+    let valid = 0;
+    let start = 0, minLen = Infinity,needs = {}
+    while (right < arr.length) {
+      let c = arr[right];
+      if (needs[c[1]]) {
+        needs[c[1]]++;
+      } else {
+        needs[c[1]] = 1;
+        valid++;
+      }
+      while (valid === nums.length) {
+        let d = arr[left];
+        if (arr[right][0] - arr[left][0] < minLen) {
+          start = arr[left][0];
+          minLen = arr[right][0] - arr[left][0];
+        }
+        if (needs[d[1]] === 1) {
+          valid--;
+        }
+        needs[d[1]]--;
+        left++;
+      }
+      right++;
+    }
+    return [start, start + minLen];
+  };
+
+
+
+
+  let nums = [
+    [7, 10, 15, 18, 26],
+    [0, 9, 12, 20],
+    [5, 18, 22, 30]
+  ]
+  // nums = [[1],[2],[3],[4],[5],[6],[7]]
+  let start = Date.now()
+  console.log(smallestRange(nums), '结果')
+  console.log(Date.now() - start)
+</script>
