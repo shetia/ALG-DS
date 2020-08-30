@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>214. 最短回文串</title>
+    <link rel='stylesheet' href='../../../util/css/index.css'>
+    <script src='../../../util/js/highlight/index.js'></script>
+  </head>
+<body>
+  <a href='https://leetcode-cn.com/problems/shortest-palindrome/'>214. 最短回文串</a>
+  <pre class='hljs'>
+    给定一个字符串 s，你可以通过在字符串 前面 添加字符将其转换为回文串。
+    找到并返回可以用这种方式转换的最短回文串。
+    <code class='javascript'>
+      示例 1:
+
+      输入: "aacecaaa"
+      输出: "aaacecaaa"
+      示例 2:
+
+      输入: "abcd"
+      输出: "dcbabcd"
+      示例 3:
+
+      输入: "abbacd"
+      输出: "dcabbacd"
+    </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {string} s
+ * @return {string}
+ */
+ var shortestPalindrome = function(s) {
+  let n = s.length
+  let rev = [...s].reverse().join('')
+  if(s === rev) return s
+  for(let i = n - 1; i >= 0; i--){
+    if( s.slice(0, i) == rev.slice(n - i) ){
+      return rev.slice(0, n - i) + s
+    }
+  }
+};
+
+let s = "abbacd"
+s = "dcabba"
+console.log(shortestPalindrome(s), '结果')
+</script>
