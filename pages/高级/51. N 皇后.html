@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>51. N 皇后</title>
+<link rel='stylesheet' href='../../util/css/index.css'>
+<script src='../../util/js/highlight/index.js'></script>
+</head>
+<body>
+  <a href='https://leetcode-cn.com/problems/n-queens/'>51. N 皇后</a>
+  <pre class='hljs'>
+    
+    n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+    给定一个整数 n，返回所有不同的 n 皇后问题的解决方案。
+
+    每一种解法包含一个明确的 n 皇后问题的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+
+  <code class='javascript'>
+    示例：
+    
+    输入：4
+    输出：[
+    [".Q..",  // 解法 1
+      "...Q",
+      "Q...",
+      "..Q."],
+    
+    ["..Q.",  // 解法 2
+      "Q...",
+      "...Q",
+      ".Q.."]
+    ]
+    解释: 4 皇后问题存在两个不同的解法。
+    
+    
+    提示：
+    
+    皇后彼此不能相互攻击，也就是说：任何两个皇后都不能处于同一条横行、纵行或斜线上。
+    </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number} n
+ * @return {string[][]}
+ */
+ var solveNQueens = function(n) {
+  if(n === 1) return [['Q']]
+  if(n < 4) return []
+  let res = []
+  let matrix = Array.apply(null, Array(n)).map( () => Array(n).fill(0) )
+  dfs(0, matrix)
+  return res
+
+  // 递归 (行数, 矩阵)
+  function dfs(x, arr){
+    if(x > n) return
+    if(x === n) {
+      res.push( arr.map(t => t.join('')) )
+      return
+    }
+    for(let y = 0; y < n; y++){
+      if(arr[x][y] === 0){
+        let list = clone(arr)
+        fill(list, x, y)
+        dfs(x + 1, list)
+      }
+    }
+    
+  }
+  // 填充 (矩阵, 行, 列))
+  function fill (list, x, y) {
+    list[x][y] = 'Q' // 当前的位置放皇后, 对应的行列 交叉八个方向全放'.'
+    // 当前位置的左右和下面等六个方向都变成'.'
+    for(let c = 1; c < n; c++){
+      let unit = [
+        [x, y - c], [x, y + c],
+        [x + c, y - c], [x + c, y], [x + c, y + c]
+      ]
+      for(let [i, j] of unit){
+        if( list[i] && list[i][j] === 0 ) {
+          list[i][j] = '.'
+        }
+      }
+    }
+  }
+  // 深拷贝
+  function clone (arr) {
+    return JSON.parse(JSON.stringify(arr))
+  }
+};
+
+
+
+
+var solveNQueens = (n) => {
+  const board = Array.apply(null, Array(n)).map(t => Array(n).fill('.'))
+  const res = [];
+  const isValid = (x, y) => {  
+    for (let i = 0; i < x; i++) { // 之前的行
+      for (let j = 0; j < n; j++) { // 所有的列
+        if (board[i][j] == 'Q' &&   // 发现了皇后，并且和自己同行/列/对角线
+          (j == y || i + j === x + y || i - j === x - y)
+        ) {
+          return false; // 不是合法的选择
+        }
+      }
+    }
+    return true;
+  };
+  const helper = (x) => { // 放置当前行的皇后
+    if (x == n) {  // 递归的出口，超出了最后一行
+      res.push( board.map(t => t.join('')) ); // 完整解 推入res数组
+      return;
+    }
+    for (let y = 0; y < n; y++) { // 枚举选择
+      if (isValid(x, y)) { // 去掉无效的选择
+        board[x][y] = "Q"; // 作出选择，放置皇后
+        helper(x + 1);       // 继续选择，往下递归
+        board[x][y] = '.'; // 撤销当前选择
+      }
+    }
+  };
+  helper(0);  // 从第0行开始放置
+  return res;
+};
+let n = 4
+console.log(solveNQueens(n))
+</script>
