@@ -125,4 +125,151 @@ function fn(fnNames, args){
 console.log(fn(fnNames,args))
 
 
+
+/* 方法二:　链表　*/
+
+
+class LFUCache {
+  constructor(capacity){
+    this.size = capacity;       // 记录容量
+    this.minTimes = 0;          // 记录最小使用次数
+    this.valuesMap = new Map(); // {key, valueNode}
+    this.useMap = new Map();    // {次数, 链表}
+  }
+  get (key) {
+    if (!this.valuesMap.has(key)) return -1
+    let node = this.valuesMap.get(key);
+    this.updateTimes(node);
+    return node.val;
+  } 
+  put(key, value) {
+    if (this.size === 0) return 0
+    if (this.valuesMap.has(key)) { // 存在, 更新值和使用次数
+      let node = this.valuesMap.get(key)
+      node.val = value;
+      this.updateTimes(node);
+    } else { // 新增
+      // 如果要超出, 先把之前最少使用的去掉
+      if (this.size === this.valuesMap.size) {
+        let minUseLinkedList = this.useMap.get(this.minTimes)
+        let node = minUseLinkedList.tail.pre // 获取最后面节点 就是最不常使用的, 因为添加是从前面添加的
+        this.valuesMap.delete(node.key)
+        minUseLinkedList.remove(node)
+      };
+      let newNode = new Node(key, value);
+      this.valuesMap.set(key, newNode);
+      let linkedList = this.useMap.get(1); // 获取使用一次的链表
+      if (!linkedList) {                   // 没有就新建个链表
+        linkedList = new DBLinkedList();
+        this.useMap.set(1, linkedList);
+      };
+      linkedList.add(newNode);
+      this.minTimes = 1;
+    };
+  }
+  updateTimes(node) { // 更新次数
+    let times = node.times;
+    let linkedList = this.useMap.get(times);  // 获取该次数下的 链表
+    linkedList.remove(node);                  // 把该链表下的节点删除
+    // 如果这个节点是最少使用的, 且该链表只有一个节点, 更新最少使用次数
+    if (times === this.minTimes && linkedList.head.next === linkedList.tail) {
+        this.minTimes = times + 1;
+    };
+    node.times++;
+    linkedList = this.useMap.get(times + 1); // 获取该次数下的链表
+    if (!linkedList) {
+      linkedList = new DBLinkedList();
+      this.useMap.set(times + 1, linkedList);
+    }
+    linkedList.add(node);                   // 把该节点加入 使用次数加一的链表中
+  }
+}
+
+/* 封装双端链表类 */ 
+class Node {
+  constructor(key, value){
+    this.key = key;
+    this.val = value;
+    this.pre = null;
+    this.next = null;
+    this.times = 1;   // 使用次数
+  }
+}
+class DBLinkedList {  // 双端链表
+  constructor(){
+    this.head = new Node();
+    this.tail = new Node();
+    this.head.next = this.tail; // 头连尾
+    this.tail.pre = this.head;  // 尾连头
+  }
+  add(node) {// 从前面添加
+    node.next = this.head.next;
+    this.head.next.pre = node;
+    this.head.next = node;
+    node.pre = this.head;
+  } 
+  remove(node) {
+    node.pre.next = node.next;
+    node.next.pre = node.pre;
+  }
+}
+
+
+/*方法三 */
+class LFUCache {
+  constructor (capacity) {
+    this.size = capacity
+    this.valuesMap = new Map()  // key, value
+    this.timesMap = new Map()   // key, 次数
+    this.useMap = new Map()     // 次数 set{key}
+    this.min = 0
+  }
+  get (key) {
+    if(this.valuesMap.has(key)){
+      this.increaseTimes(key)
+      return this.valuesMap.get(key)
+    }
+    return -1
+  }
+  put (key, value) {
+    if(this.size === 0) return
+    if(this.valuesMap.has(key)){             // 1. 修改
+      this.valuesMap.set(key, value)
+      this.increaseTimes(key)
+    } else {                                 // 2. 新增
+      if(this.size === this.valuesMap.size){ // 2.1 当要超出, 先删除最不常用的
+        let minSet = this.useMap.get(this.min)
+        let minKey = minSet.keys().next().value
+        minSet.delete(minKey)
+        this.valuesMap.delete(minKey)
+        this.timesMap.delete(minKey)
+      }
+      // 2.2 新增属性, 更新最小使用次数
+      this.valuesMap.set(key, value)
+      let useSet = this.useMap.get(1)
+      if(!useSet) {
+        useSet = new Set()
+        this.useMap.set(1, useSet)
+      }
+      this.timesMap.set(key, 1)
+      useSet.add(key)
+      this.min = 1
+    }
+  }
+  increaseTimes (key) { // 次数加1
+    let times = this.timesMap.get(key)
+    let useSet = this.useMap.get(times)
+    if(this.min === times && useSet.size === 1){
+      this.min += 1
+    }
+    useSet.delete(key) 
+    this.timesMap.set(key, times + 1)
+    useSet = this.useMap.get(times + 1)
+    if(!useSet){
+      useSet = new Set()
+      this.useMap.set(times + 1, useSet)
+    }
+    useSet.add(key)
+  }
+}
 </script>
