@@ -272,4 +272,68 @@ class LFUCache {
     useSet.add(key)
   }
 }
+
+
+
+</script>
+<script>
+  // typescript O(1) Map写法
+  class LFUCache {
+    public max: number;
+    public min: number;
+    public val_times: Map<number, [number, number]>;
+    public times_set: Map<number, Set<number>>;
+    constructor(capacity: number) {
+      this.max = capacity
+      this.min = 0
+      this.val_times = new Map()
+      this.times_set = new Map()
+    }
+  
+    get(key: number): number {
+      if( this.val_times.has(key) ) {
+        this.update(key)
+        let [ val ] = this.val_times.get(key) || [-1]
+        return val
+      }
+      return -1
+    }
+  
+    put(key: number, value: number): void {
+      if( this.max === 0 ) return
+      if( this.val_times.has(key) ) {
+        let [ val, times ] = this.val_times.get(key) || [-1, -1]
+        this.val_times.set(key, [value, times])
+        this.update(key)
+      } else {
+        if (this.max === this.val_times.size) {
+          let minSet = this.times_set.get(this.min) || new Set()
+          let minKey = minSet.keys().next().value || -1
+          this.val_times.delete(minKey)
+          minSet.delete(minKey)
+        }
+        this.val_times.set(key, [value, 1])
+        let useSet = this.times_set.get(1)
+        if( !useSet ) {
+          useSet = new Set()
+          this.times_set.set(1, useSet)
+        }
+        useSet.add(key)
+        this.min = 1
+      }
+    }
+  
+    update (key: number): void {
+      let [val, times] = this.val_times.get(key) || [-1, -1]
+      let useSet = this.times_set.get(times) || new Set()
+      if(this.min === times && useSet.size === 1) this.min++
+      useSet.delete(key)
+      useSet = this.times_set.get(times + 1) || new Set()
+      if (!useSet.size) {
+        this.times_set.set(times + 1, useSet)
+      }
+      useSet.add(key)
+      this.val_times.set(key, [val, times + 1])
+    }
+  }
 </script>
