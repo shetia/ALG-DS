@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>486. 预测赢家</title>
+<link rel='stylesheet' href='../../util/css/index.css'>
+<script src='../../util/js/highlight/index.js'></script>
+</head>
+<body>
+  <a href='https://leetcode-cn.com/problems/predict-the-winner/'>486. 预测赢家</a>
+  <pre class='hljs'>
+        给定一个表示分数的非负整数数组。 
+        
+        玩家 1 从数组任意一端拿取一个分数，随后玩家 2 继续从剩余数组任意一端拿取分数，然后玩家 1 拿，…… 。
+
+        每次一个玩家只能拿取一个分数，分数被拿取之后不再可取。直到没有剩余分数可取时游戏结束。
+        
+        最终获得分数总和最多的玩家获胜。
+      
+        给定一个表示分数的数组，预测玩家1是否会成为赢家。你可以假设每个玩家的玩法都会使他的分数最大化。
+      <code class='javascript'>
+        示例 1：
+        
+        输入：[1, 5, 2]
+        输出：False
+        解释：一开始，玩家1可以从1和2中进行选择。
+        如果他选择 2（或者 1 ），那么玩家 2 可以从 1（或者 2 ）和 5 中进行选择。
+        如果玩家 2 选择了 5 ，        那么玩家 1 则只剩下 1（或者 2 ）可选。
+        所以，玩家 1 的最终分数为 1 + 2 = 3，而玩家 2 为 5 。
+        因此，玩家 1 永远不会成为赢家，返回 False 。
+        示例 2：
+        
+        输入：[1, 5, 233, 7]
+        输出：True
+        解释：玩家 1 一开始选择 1 。然后玩家 2 必须从 5 和 7 中进行选择。无论玩家 2 选择了哪个，玩家 1 都可以选择 233 。
+            最终，玩家 1（234 分）比玩家 2（12 分）获得更多的分数，所以返回 True，表示玩家 1 可以成为赢家。
+         
+        
+        提示：
+        
+        1 <= 给定的数组长度 <= 20.
+        数组里所有分数都为非负数且不会大于 10000000 。
+        如果最终两个玩家的分数相等，那么玩家 1 仍为赢家。
+     </code>
+  </pre>
+</body>
+</html>
+<script>
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+/* 方法一: 递归 */
+var PredictTheWinner = function(nums) {
+  let n = nums.length
+  if(n & 1 === 0) return true            // 偶数个直接返回true
+  let sum = nums.reduce((a, b) => a + b) // 总和
+  let a = dfs(0, n - 1)
+  return a >= sum - a
+  
+  /* 递归函数 */
+  function dfs(i, j) {
+    if(i === j) return nums[i]                         // 只剩一个,直接返回
+    if(i + 1 === j) return Math.max(nums[i], nums[j])  // 只剩两个, 返回大的
+    // 因为对方也是高手, 当你选择任意一个, 他也会把小的留给你
+    // 要做的就是获取哪种选择中能得到最大的
+    return Math.max(
+      nums[i] + Math.min(  // 当你选左边的, 下一次你再选, 对手会留小的给你
+        dfs(i + 1, j - 1), // 对手选了右边
+        dfs(i + 2, j)      // 对手选了左边
+      ),  
+      nums[j] + Math.min(  // 当你选右边的, 下一次你再选, 对手会留小的给你
+        dfs(i + 1, j - 1), // 对手选了左边
+        dfs(i, j - 2)      // 对手选了右边
+      )   
+    )
+  }
+};
+/* 使用数组缓存计算过的 */
+var PredictTheWinner = function(nums) {
+  let n = nums.length
+  if(n & 1 === 0) return true            // 偶数个直接返回true
+  let sum = nums.reduce((a, b) => a + b) // 总和
+  let cache = Array.apply( null, Array(n) ).map(t => Array(n))
+  let a = dfs(0, n - 1)
+  return a >= sum - a
+  
+  /* 递归函数 */
+  function dfs(i, j) {
+    if( cache[i][j] !== undefined ) return cache[i][j] 
+    if(i === j) return nums[i]                         
+    if(i + 1 === j) return Math.max(nums[i], nums[j]) 
+    cache[i][j] = Math.max(
+      nums[i] + Math.min( dfs(i + 1, j - 1), dfs(i + 2, j) ),  // 选择任意一个之后, 下次对方都会留个小的给你
+      nums[j] + Math.min( dfs(i + 1, j - 1),  dfs(i, j - 2) )   
+    )
+    return cache[i][j]
+  }
+};
+
+// 方法二: 记忆递归
+var PredictTheWinner = function(nums) {
+  let n = nums.length
+  if(n & 1 === 0) return true 
+  let cache = Array.apply( null, Array(n) ).map(t => Array(n))
+  return dfs(0, n - 1) >= 0
+  
+  /* 递归函数 */
+  function dfs(i, j) {
+    if( cache[i][j] !== undefined ) return cache[i][j] 
+    if( i === j ) return nums[i]    
+    let selectI = nums[i] - dfs(i + 1, j)
+    let selectJ = nums[j] - dfs(i, j - 1)
+    cache[i][j] = Math.max(selectI, selectJ)
+    return cache[i][j]
+  }
+};
+
+/* 方法三: 动态规划 */
+var PredictTheWinner = function(nums) {
+  let n = nums.length
+  if(n & 1 === 0) return true 
+  let dp = []
+  for(let i = 0; i < n; i++){
+    dp[i] = Array(n)
+    dp[i][i] = nums[i]
+  }
+
+  for (let i = n - 2; i >= 0; i--) {
+    for (let j = i + 1; j < n; j++) {
+      let left = nums[i] - dp[i + 1][j]
+      let right = nums[j] - dp[i][j - 1]
+      dp[i][j] = Math.max(left, right)
+    }
+  }
+  return dp[0][n - 1] >= 0
+};
+
+let nums = [1, 5, 233, 7]
+nums = [1, 5, 2]
+console.log(PredictTheWinner(nums))
+</script>
