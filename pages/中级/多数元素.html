@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+</body>
+</html>
+
+<script>
+/*
+1、当前字符串中包含字母和数字，用一个方法实现出现最多的字母和数字（10分）
+a)如果只有字母，那么只返回出觋最多的字，只有数字情况同理
+b)如果有相同次数多的字母或数字出现，将按照第一次出现的顺序返回在列表中
+数组．var str="abcdccbdb58575"
+返回．["b","c",5]
+
+*/
+function more(str){
+  let obj = {}
+  let max = 0
+  for(let s of str){
+    obj[s] = (obj[s] || 0) + 1
+    max = Math.max(max, obj[s])
+  }
+  let set = new Set()
+  let has_word = false
+  let has_num = false
+  for(let s of str){
+    if(obj[s] === max){
+      set.add(s)
+      if(!has_num && s.charCodeAt() < 58) has_num = s
+      if(!has_word && s.charCodeAt() > 64) has_word = s
+    }
+  }
+  // 纯字母或纯数字
+  if((!has_num && has_word) || (!has_word && has_num)) return has_word || has_num
+  return [...set]
+}
+var str="abcdccbdb58575"
+// str = 'aabbbccc1'
+// str = '1112223334444aaaaa44'
+console.log(more(str))
+
+
+for(var i = 1; i <= 500; i++){
+  (function (i) {
+    setTimeout(() => {
+      console.log(i)
+    }, 1000 * i)
+  })(i)
+}
+</script>
