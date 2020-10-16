@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+function chengeNum (str) {
+	let obj = {
+		'零': 0,'一': 1,'二': 2,'三': 3,'四': 4,'五': 5,'六': 6,'七': 7,'八': 8, '九': 9,
+    '壹': 1, '贰': 2, '叁': 3, '肆': 4, '伍': 5, '陆': 6, '柒': 7, '捌': 8, '玖': 9,
+    '两': 2, '十': 10, '拾': 10,
+  }
+  let unit = { '千': 1000, '百': 100, '十': 10, '拾': 10, '佰': 100, '仟': 1000}
+  let bigUnit = {'亿': 1e8, '万': 10000, '萬': 10000, '億': 1e8}
+  let temp = 0
+  let sum = 0
+  for(let i = 0; i < str.length; i++){
+    let s = str[i]
+    if (s === '零') continue
+    if (s in bigUnit) {
+      sum += temp * bigUnit[s]
+      temp = 0
+    } else {
+      let next = str[i + 1]
+      if (next && !(next in bigUnit)){
+        temp += obj[s] * unit[next]
+        i++
+      } else {
+        temp += obj[s]
+      }
+    }
+  }
+  return sum + temp
+}
+let test = [
+  [0, '零'],
+  [1, '一'],
+  [2, '二'],
+  [3, '三'],
+  [4, '四'],
+  [5, '五'],
+  [7, '柒'],
+  [8, '捌'],
+  [9, '玖'],
+  [10, '十'],
+  [10, '拾'],
+  [12, '十二'],
+  [32, '三十二'],
+  [12, '壹拾贰'],
+  [100, '一百'],
+  [101, '一百零一'],
+  [1020, '一千零二十'],
+  [10001, '一万零一'],
+  [283980, '二十八万三千九百八十'],
+  [1e6, '一百万'],
+  [1e7, '一千万'],
+  [1e8, '一亿'],
+  [250012, '贰拾伍萬零壹拾贰'],
+  [282834, '二十八万两千八百三十四'],
+]
+function testHandler (arr) {
+  for(let i = 0; i < arr.length; i++){
+    let [num, str] = arr[i]
+    let n = chengeNum(str)
+    console.log(num, str, '----', n, n === num)
+  }
+}
+testHandler(test)
+</script>
